@@ -1,0 +1,240 @@
+{
+    "activeFile": "trainer.tsx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
+    "fileStates": {
+        "": {
+            "scaleInDock": 1
+        },
+        "../objectsFromBall/Object1.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 1
+        },
+        "../objectsFromBall/Outdoor_Decor_Free.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "../objectsFromBall/Tiled1.tsx": {
+            "scaleInDock": 1
+        },
+        "../objectsFromBall/untitled.tmx": {
+            "scale": 1.5,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 240,
+                "y": 159.66666666666663
+            }
+        },
+        "../objectsFromBall/untitled.tmx#red2.0": {
+            "scaleInDock": 1
+        },
+        "../objectsFromBall/untitled.tmx#tree": {
+            "scaleInDock": 1
+        },
+        "C:/Users/Patch/Downloads/Game Dih/Game Dih/untitled.tmx": {
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 288,
+                "y": 228.5
+            }
+        },
+        "Oak_Tree - Fixed.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Oak_Tree.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Object1.tsx": {
+            "scaleInDock": 1
+        },
+        "Outdoor_Decor_Free.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 2,
+            "scaleInEditor": 1
+        },
+        "Path_Tile.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Player.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Tiled1.tsx": {
+            "scaleInDock": 1
+        },
+        "combined.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 0.75,
+            "scaleInEditor": 1
+        },
+        "crate.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "dungeon.tmx": {
+            "scale": 1.3438541666666666,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 240.35346097201767,
+                "y": 211.7045190295326
+            }
+        },
+        "farmer.tsx": {
+            "scaleInDock": 2,
+            "scaleInEditor": 8
+        },
+        "farmland.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 3,
+            "scaleInEditor": 1
+        },
+        "fenceobjects.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 3,
+            "scaleInEditor": 1
+        },
+        "house.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 2,
+            "scaleInEditor": 1
+        },
+        "lime.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "main.tmx": {
+            "expandedGroupLayers": [
+                8
+            ],
+            "expandedObjectLayers": [
+                15
+            ],
+            "scale": 4,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 502.25,
+                "y": 178.625
+            }
+        },
+        "main.tmx#plowed": {
+            "scaleInDock": 1
+        },
+        "objects.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 0.33,
+            "scaleInEditor": 1
+        },
+        "pathtile.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 2,
+            "scaleInEditor": 1
+        },
+        "plowed.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "postman.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 5.5
+        },
+        "red2.0 8x8.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 23,
+            "scaleInEditor": 1
+        },
+        "red2.0.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "smallcrate.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "test2.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "tileset.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 2,
+            "scaleInEditor": 1
+        },
+        "trainer.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "tree.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "treelast.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        }
+    },
+    "frame.defaultDuration": 500,
+    "last.imagePath": "C:/Users/Patch/Desktop/261200 OOP/SlimeAndSoil/assets/objects/myAssets",
+    "map.lastUsedFormat": "tmx",
+    "map.layerDataFormat": "3",
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "openFiles": [
+        "main.tmx",
+        "combined.tsx",
+        "farmland.tsx",
+        "house.tsx",
+        "objects.tsx",
+        "Outdoor_Decor_Free.tsx",
+        "Path_Tile.tsx",
+        "pathtile.tsx",
+        "tileset.tsx",
+        "fenceobjects.tsx",
+        "red2.0.tsx",
+        "red2.0 8x8.tsx",
+        "tree.tsx",
+        "lime.tsx",
+        "plowed.tsx",
+        "../objectsFromBall/untitled.tmx",
+        "crate.tsx",
+        "smallcrate.tsx",
+        "Player.tsx",
+        "trainer.tsx"
+    ],
+    "project": "tiled.tiled-project",
+    "property.type": "bool",
+    "recentFiles": [
+        "main.tmx",
+        "combined.tsx",
+        "farmland.tsx",
+        "house.tsx",
+        "objects.tsx",
+        "Outdoor_Decor_Free.tsx",
+        "Path_Tile.tsx",
+        "pathtile.tsx",
+        "tileset.tsx",
+        "fenceobjects.tsx",
+        "red2.0.tsx",
+        "red2.0 8x8.tsx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 32,
+        "width": 32
+    },
+    "tileset.type": 0
+}

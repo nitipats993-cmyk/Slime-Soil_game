@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="16" nextobjectid="130">
+ <tileset firstgid="1" source="tileset.tsx"/>
+ <tileset firstgid="19" source="combined.tsx"/>
+ <tileset firstgid="495" source="objects.tsx"/>
+ <tileset firstgid="510" source="Outdoor_Decor_Free.tsx"/>
+ <tileset firstgid="594" source="farmland.tsx"/>
+ <tileset firstgid="603" source="fenceobjects.tsx"/>
+ <tileset firstgid="619" source="pathtile.tsx"/>
+ <tileset firstgid="637" source="red2.0.tsx"/>
+ <tileset firstgid="638" source="house.tsx"/>
+ <tileset firstgid="686" source="tree.tsx"/>
+ <tileset firstgid="687" source="lime.tsx"/>
+ <tileset firstgid="688" name="plowed" tilewidth="16" tileheight="16" tilecount="1" columns="1">
+  <image source="myAssets/plowed.png" width="16" height="16"/>
+ </tileset>
+ <tileset firstgid="689" source="Player.tsx"/>
+ <tileset firstgid="749" source="trainer.tsx"/>
+ <layer id="1" name="ground layer" width="30" height="30">
+  <data encoding="base64" compression="zlib">
+   eJyTY2BgkBvFo3gUj+JhhFWBWA2I1YFYA4g1sfC1kNTnMTEw5ANxARNl9roDcRgTfuxDA3szibA3jwb2dhNh7wQS7M1hwo5z0dSvJcLeTSTYm8+EHaOrp3b8FjGh4lIc6mkdv7jUUzt+ibWX2vFLrL3ngfgCEF8E4ktAfBkL/woJ9rKiYWT16HKkYFLNGan2luMoT4jFFWTaSy1MrL2FTJhlCSW4mML4GsVDEwMAe0adug==
+  </data>
+ </layer>
+ <layer id="6" name="decorations" width="30" height="30">
+  <data encoding="base64" compression="zlib">
+   eJzdlz0OwjAMhUMlYCksSFwDWGBjYuVOvRIH4wqIVFApSv3z3Lqh4lud2Imf67ghfHgtAsS64m17wcbRxs1j7wb4SdmA+7cj45RmCZyXyudQDjHe0ZAjTseV4OM6Aw2kvGq1xO1FNfDSKvVH+Uw14NbcZqAFxRM8V+10/vuP8yD12NPXhvQCCqTevGuy8yn5ze3S+inOp+HVV6VeWAKvbwTlYYw3ZX5K3L1UbeZxLPXZrstnn3PVX0PtG3M/aw9AQGe9f6R7C7ScWkBnb60/I1pegFjaOxfn0ybOqY3uSQbJk+W/ROpjdaKbRR9pLvDiDaHiMz8=
+  </data>
+ </layer>
+ <layer id="3" name="background" width="30" height="30">
+  <data encoding="base64" compression="zlib">
+   eJzt0zcOwlAQRdHhgwwUsGYoCCIHk3MWaY/cgsKN5d943MyTTmFppOvCFhEpSDbz6ebgEuRT6PrcBJ7v5/73RZQSlD26FVQjzzUCdRd3nc4a9Jpooa3U7tDpooc+BhgqtEc0xphgihAzhe6cxgJLrLDGRqG7pbHDHgcccVLonmlccMUNdzyUvq0nnRfe+OCr/D/ZbDabzWazZbUfgloZTA==
+  </data>
+ </layer>
+ <layer id="5" name="foreground" width="30" height="30">
+  <data encoding="base64" compression="zlib">
+   eJztlUEKgDAMBMWHePPmk6yK/q9vtIJCEIVN2SYqLuRS0k7ThG2sKxfFn/tILuueb6nXgpt7pwbYV6JfrSFXqiNyp5QXUgyn/H5f32JW1IByRyAPyZFcGdZcxpkaLiov7uLEReTFRd7kSoi/saTxN+kR4cZHcriIvyGy/BekvvAvsHVwUT5r5rX1Ir1DOFoua+YZ/c05A9lTYva85nkF/KckBA==
+  </data>
+ </layer>
+ <layer id="12" name="Farmable" width="30" height="30" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJztzbEJAAAIwDDx/1980Q+cHAQT6NwIALZUzvn6+t79AnzUmkksQQ==
+  </data>
+ </layer>
+ <layer id="11" name="Collision" width="30" height="30" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJzllUsKwCAMRKX39u5dFYLoZPJ10YALa5w3RGvmM8a8OLTI0lm1rNyIt+z6rGunXEtt5B5mP/KJ/FvPzMPV9lkYUe63zkQ21xLoDCu5iKl52tVql4s0vL7QPWP0vNyIZtU7mc1lc//EZfVYZjdXsruj8n9ndOS8Ixi/N97viO4NLuLIOeOxipulKb+f5uy9QnXxnJHWbzN7JOJGer4l//T+dIwXfNmKag==
+  </data>
+ </layer>
+ <layer id="13" name="Soil" width="30" height="30">
+  <data encoding="base64" compression="zlib">
+   eJztwQEBAAAAgiD/r25IQAEAAPBoDhAAAQ==
+  </data>
+ </layer>
+ <objectgroup id="15" name="Objects">
+  <object id="128" x="399.818" y="255.636" width="48" height="48.3636">
+   <properties>
+    <property name="isShippingBin" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="129" x="416.545" y="111.818" width="47.4545" height="48.1818"/>
+ </objectgroup>
+ <objectgroup id="14" name="Lights">
+  <object id="120" x="56.5" y="304">
+   <properties>
+    <property name="isLight" type="bool" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="121" x="200.75" y="399.25">
+   <properties>
+    <property name="isLight" type="bool" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="122" x="344.25" y="335">
+   <properties>
+    <property name="isLight" type="bool" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="123" x="344" y="127">
+   <properties>
+    <property name="isLight" type="bool" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="124" x="384.25" y="116.25">
+   <properties>
+    <property name="isLight" type="bool" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="125" x="399.75" y="145.25">
+   <properties>
+    <property name="isLight" type="bool" value="true"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+</map>

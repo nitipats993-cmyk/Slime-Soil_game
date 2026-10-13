@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="331">
+ <editorsettings>
+  <export target="../../../../../../ballt/Downloads/John.csv" format="csv"/>
+ </editorsettings>
+ <tileset firstgid="1" source="Tiled1.tsx"/>
+ <tileset firstgid="120" source="Object1.tsx"/>
+ <tileset firstgid="137" source="Outdoor_Decor_Free.tsx"/>
+ <tileset firstgid="221" name="red2.0" tilewidth="16" tileheight="16" tilecount="1" columns="1">
+  <image source="../objects/myAssets/red2.0.png" width="16" height="16"/>
+ </tileset>
+ <tileset firstgid="222" name="tree" tilewidth="128" tileheight="80" tilecount="1" columns="0">
+  <tileoffset x="-88" y="16"/>
+  <grid orientation="orthogonal" width="1" height="1"/>
+  <tile id="0">
+   <image source="../objects/Outdoor decoration/Oak_Tree fixed.png" width="128" height="80"/>
+  </tile>
+ </tileset>
+ <layer id="1" name="Ground" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxLZ2BgSB/Fo3iQ4JhBbl7sIAgjEGYEYqYBsFcIiIWpHEbEqCfG3oHyLz5MbvpTBmKVAfDvSMDULhNGqhtheLCUiYMRAwBf2O29
+  </data>
+ </layer>
+ <layer id="2" name="BackGround" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJzFVUEKwCAM6/c97rbdfIhv8S1jMEFKqrEqBmQKpUnTTrOI5EOrRpI2kvqycXU8w/udw7+PHQ6EB+RBvEE4sHEIiHcVgrHXvJZXTF33oKad9c7yolqQBz1fkNcaVycHg54O1ueZ+UV5Zvvr1bN7rqyeWbye2Slg/qsV9Y56bd0bq2ZolFfDo6PVp5o3Erl030b1lNo87+8Mypt4+n4+sV7aSWrL
+  </data>
+ </layer>
+ <layer id="7" name="Collision" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBg4cJfOGNleeoFRe4e/vXeR2PQEo/YOX3sHKl2NxPw7ai/97R2Ien8gAABJw02z
+  </data>
+ </layer>
+</map>
