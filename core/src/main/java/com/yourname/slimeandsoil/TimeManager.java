@@ -24,8 +24,9 @@ public class TimeManager {
     private final Color dawnColor = new Color(0.7f, 0.6f, 0.8f, 1.0f);       // Dawn (Soft Purple)
     private final Color currentAmbientColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
 
-    // Tracker for DungeonEntries
+    // Trackers for Daily Limits & Evening Farm Wave
     private boolean enteredDungeonToday = false;
+    private boolean farmWaveTriggeredToday = false;
 
     private TimeManager() {}
 
@@ -43,11 +44,6 @@ public class TimeManager {
         if (currentHour >= 24.0f) {
             currentHour -= 24.0f;
             startNewDay();
-        }
-
-        // Press 'N' to sleep and fast-forward to 6:00 AM
-        if (Gdx.input.isKeyJustPressed(Input.Keys.N)) {
-            sleepToNextDay();
         }
 
         updateAmbientLighting();
@@ -87,15 +83,30 @@ public class TimeManager {
         batch.setColor(Color.WHITE);
     }
 
+    /**
+     * Fast forwards daytime directly to 18:00 (6:00 PM Evening) for Farm Defense
+     */
+    public void skipToEvening() {
+        if (currentHour < 18.0f) {
+            System.out.println("Resting... Fast-forwarding to 18:00 PM (Start of Farm Defense).");
+            currentHour = 18.0f;
+        }
+    }
+
+    /**
+     * Full rest at the house door to advance to 6:00 AM of the Next Day & refill stats
+     */
     public void sleepToNextDay() {
-        System.out.println("Sleeping... Fast-forwarding to 6:00 AM.");
+        System.out.println("Sleeping until 6:00 AM of the next day...");
         currentHour = 6.0f;
         startNewDay();
+        PlayerStats.getInstance().fullRestore();
     }
 
     private void startNewDay() {
         currentDay++;
-        enteredDungeonToday = false; // Reset daily dungeon entry limit on new day
+        enteredDungeonToday = false;     // Reset daily dungeon entry limit
+        farmWaveTriggeredToday = false;  // Reset evening farm wave trigger for the new day
         System.out.println("=== Day " + currentDay + " Has Started ===");
         CropManager.getInstance().advanceDay();
     }
@@ -106,6 +117,14 @@ public class TimeManager {
 
     public void setEnteredDungeonToday(boolean value) {
         this.enteredDungeonToday = value;
+    }
+
+    public boolean isFarmWaveTriggeredToday() {
+        return farmWaveTriggeredToday;
+    }
+
+    public void setFarmWaveTriggeredToday(boolean value) {
+        this.farmWaveTriggeredToday = value;
     }
 
     public int getCurrentDay() { return currentDay; }

@@ -238,7 +238,7 @@
         "chicken-white.tsx"
     ],
     "project": "tiled.tiled-project",
-    "property.type": "float",
+    "property.type": "bool",
     "recentFiles": [
         "chicken-white.tsx",
         "trainer.tsx",

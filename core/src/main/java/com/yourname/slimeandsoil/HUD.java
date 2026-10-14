@@ -55,7 +55,28 @@ public class HUD {
         font.setColor(Color.WHITE);
         font.draw(batch, "Tool: " + player.getCurrentToolName(), 25, 655);
 
-        // 3. Combat Stats Gauges (Top Center)
+        // 3. Wave Status & Skip Timer Display (Top Left below Tool)
+        WaveManager wm = WaveManager.getInstance();
+        if (wm.getCurrentWave() == 0) {
+            font.setColor(Color.ORANGE);
+            font.draw(batch, "Wave: Not Started (Press [M] to Start Wave 1)", 25, 615);
+        } else {
+            int alive = wm.getAliveSlimeCount();
+            String skipStatus;
+            if (alive == 0) {
+                font.setColor(Color.GREEN);
+                skipStatus = "Wave Clear! Press [M] for Next Wave";
+            } else if (wm.getWaveTimer() <= 0) {
+                font.setColor(Color.ORANGE);
+                skipStatus = "Press [M] to Skip to Next Wave";
+            } else {
+                font.setColor(Color.LIGHT_GRAY);
+                skipStatus = String.format("Next Wave Skip in %ds", (int) Math.ceil(wm.getWaveTimer()));
+            }
+            font.draw(batch, String.format("Wave %d  |  Slimes: %d  |  %s", wm.getCurrentWave(), alive, skipStatus), 25, 615);
+        }
+
+        // 4. Combat Stats Gauges (Top Center)
         PlayerStats stats = PlayerStats.getInstance();
         font.setColor(Color.RED);
         font.draw(batch, "HP: " + stats.getCurrentHealth() + "/" + stats.getMaxHealth(), 380, 695);
@@ -66,7 +87,7 @@ public class HUD {
         font.setColor(Color.BLUE);
         font.draw(batch, "Mana: " + stats.getCurrentMana() + "/" + stats.getMaxMana(), 680, 695);
 
-        // 4. Gold & Skill Point Trackers (Top Right)
+        // 5. Gold & Skill Point Trackers (Top Right)
         int gold = Inventory.getInstance().getGold();
         int skillPts = stats.getSkillPoints();
 
@@ -76,14 +97,21 @@ public class HUD {
         font.setColor(Color.GREEN);
         font.draw(batch, "Skill: " + skillPts, 1080, 655);
 
-        // 5. Hotbar Controls Guide
+        // 6. Hotbar Controls Guide
         font.getData().setScale(1.1f);
         font.setColor(Color.LIGHT_GRAY);
-        font.draw(batch, "[1] Hoe  [2] Tomato  [3] Gem  [4] Skill  [5] Carrot  [6] Wheat  [7] Can  |  [Space] Action  [Shift] Dodge  [J/L-Click] Atk  [N] Sleep", 20, 35);
+        font.draw(batch, "[1] Hoe  [2] Tomato  [3] Gem  [4] Skill  [5] Carrot  [6] Wheat  [7] Can  |  [Space] Action  [Shift] Dodge  [M] Wave  [R] Rest 18:00", 20, 35);
         font.getData().setScale(1.8f);
 
-        // 6. Render Overlays
-        if (warningDialog.isActive()) {
+        // 7. Render Overlays
+        if (stats.isDead()) {
+            font.getData().setScale(3.0f);
+            font.setColor(Color.RED);
+            font.draw(batch, "=== GAME OVER ===", 420, 420);
+            font.getData().setScale(1.6f);
+            font.setColor(Color.WHITE);
+            font.draw(batch, "You were defeated by slimes! Restart game to continue.", 330, 340);
+        } else if (warningDialog.isActive()) {
             warningDialog.render(batch, font);
         } else if (skillShopDialog.isActive()) {
             skillShopDialog.render(batch, font);

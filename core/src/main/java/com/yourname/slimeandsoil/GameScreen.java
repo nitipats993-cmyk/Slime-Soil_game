@@ -8,6 +8,7 @@ import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,8 +31,9 @@ public class GameScreen extends ScreenAdapter {
     private float mapWorldWidth;
     private float mapWorldHeight;
 
-    // --- Map Transition Triggers ---
+    // --- Map Transition Triggers & House Bed Bounds ---
     private final List<MapTransition> transitions = new ArrayList<>();
+    private Rectangle bedArea = null;
 
     public GameScreen(SlimeAndSoilGame game) {
         this.game = game;
@@ -74,6 +76,8 @@ public class GameScreen extends ScreenAdapter {
         mapWorldHeight = mapHeightInTiles;
 
         transitions.clear();
+        bedArea = null;
+        LightManager.getInstance().clearLights();
 
         // Scan Tiled map layers
         for (MapLayer layer : currentMap.getLayers()) {
@@ -93,6 +97,18 @@ public class GameScreen extends ScreenAdapter {
                     float targetSpawnY = object.getProperties().get("spawnY", Float.class);
 
                     transitions.add(new MapTransition(x, y, width, height, targetMap, targetSpawnX, targetSpawnY));
+                }
+
+                // Scan for Bed / House Entrance (isBed = true in Tiled)
+                if (object.getProperties().containsKey("isBed") &&
+                    Boolean.TRUE.equals(object.getProperties().get("isBed", Boolean.class))) {
+
+                    float x = object.getProperties().get("x", Float.class) * UNIT_SCALE;
+                    float y = object.getProperties().get("y", Float.class) * UNIT_SCALE;
+                    float width = object.getProperties().get("width", Float.class) * UNIT_SCALE;
+                    float height = object.getProperties().get("height", Float.class) * UNIT_SCALE;
+
+                    bedArea = new Rectangle(x, y, width, height);
                 }
 
                 // Scan for Light Sources
@@ -142,10 +158,20 @@ public class GameScreen extends ScreenAdapter {
             }
         }
 
+        // Default bed location in main.tmx if no object property is set in Tiled
+        if (bedArea == null && currentMapPath.contains("main.tmx")) {
+            bedArea = new Rectangle(20.0f, 18.0f, 3.0f, 3.0f); // In front of house door
+        }
+
         // Reposition player cleanly
         if (player != null) {
             player.setPosition(spawnX, spawnY);
         }
+    }
+
+    public boolean isHouseBedLocation(int tileX, int tileY) {
+        if (bedArea == null) return false;
+        return bedArea.contains(tileX + 0.5f, tileY + 0.5f);
     }
 
     public MapTransition checkTransition(float feetX, float feetY) {
@@ -160,6 +186,7 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void render(float delta) {
         player.update(delta, currentMap, hud);
+        WaveManager.getInstance().update(delta, player, currentMap, currentMapPath);
         TimeManager.getInstance().update(delta);
 
         game.camera.position.set(player.getX() + (player.getWidth() / 2), player.getY() + (player.getHeight() / 2), 0);
@@ -187,6 +214,11 @@ public class GameScreen extends ScreenAdapter {
             game.batch.end();
         }
 
+        // Render Slimes on both main farm and forest dungeon
+        game.batch.begin();
+        WaveManager.getInstance().render(game.batch);
+        game.batch.end();
+
         game.batch.begin();
         player.render(game.batch);
         game.batch.end();
@@ -211,6 +243,7 @@ public class GameScreen extends ScreenAdapter {
         if (mapRenderer != null) mapRenderer.dispose();
         if (player != null) player.dispose();
         if (hud != null) hud.dispose();
+        WaveManager.getInstance().dispose();
         CropFactory.dispose();
         SwordData.dispose();
         LightManager.getInstance().dispose();

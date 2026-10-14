@@ -9,31 +9,40 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 public class WarningDialog {
 
     private boolean active = false;
-    private String title = "";
+    private String title = "=== CONFIRMATION ===";
     private String message = "";
-    private Runnable confirmAction;
+    private Runnable onConfirmAction;
 
-    public void show(String title, String message, Runnable onConfirm) {
+    /**
+     * 3-parameter method for custom titles (e.g., ShippingBin)
+     */
+    public void show(String title, String message, Runnable onConfirmAction) {
         this.title = title;
         this.message = message;
-        this.confirmAction = onConfirm;
+        this.onConfirmAction = onConfirmAction;
         this.active = true;
+    }
+
+    /**
+     * 2-parameter method for default title prompts (e.g., Player actions)
+     */
+    public void showDialog(String message, Runnable onConfirmAction) {
+        show("=== CONFIRMATION ===", message, onConfirmAction);
     }
 
     public void update() {
         if (!active) return;
 
-        // Press 'Y' to Confirm
+        // Press Y to confirm action
         if (Gdx.input.isKeyJustPressed(Input.Keys.Y)) {
-            if (confirmAction != null) {
-                confirmAction.run();
-            }
             active = false;
+            if (onConfirmAction != null) {
+                onConfirmAction.run();
+            }
         }
 
-        // Press 'N' or 'ESCAPE' to Cancel
+        // Press N or ESC to cancel
         if (Gdx.input.isKeyJustPressed(Input.Keys.N) || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            System.out.println("Action cancelled.");
             active = false;
         }
     }
@@ -41,26 +50,21 @@ public class WarningDialog {
     public void render(SpriteBatch batch, BitmapFont font) {
         if (!active) return;
 
-        // Draw Warning Box Text in Center of Screen (1280x720 Viewport Space)
         font.getData().setScale(2.0f);
-        font.setColor(Color.RED);
-        font.draw(batch, "=== " + title + " ===", 480, 450);
+        font.setColor(Color.GOLD);
+        font.draw(batch, title, 420, 500);
 
-        font.getData().setScale(1.5f);
-        font.setColor(Color.YELLOW);
-        font.draw(batch, message, 380, 390);
-
+        font.getData().setScale(1.4f);
         font.setColor(Color.WHITE);
-        font.draw(batch, "[Y] Confirm / Sell   |   [N] Cancel", 430, 330);
+        font.draw(batch, message, 320, 430);
 
-        font.getData().setScale(1.8f); // Reset font scale
+        font.setColor(Color.YELLOW);
+        font.draw(batch, "[Y] Proceed   |   [N] Cancel", 430, 350);
+
+        font.getData().setScale(1.8f);
     }
 
     public boolean isActive() {
         return active;
-    }
-
-    public void close() {
-        active = false;
     }
 }
