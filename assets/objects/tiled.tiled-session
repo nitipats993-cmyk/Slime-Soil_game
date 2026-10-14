@@ -125,11 +125,11 @@
             "expandedObjectLayers": [
                 15
             ],
-            "scale": 4,
-            "selectedLayer": 5,
+            "scale": 2,
+            "selectedLayer": 7,
             "viewCenter": {
-                "x": 238.25,
-                "y": 334.625
+                "x": 208.5,
+                "y": 296.75
             }
         },
         "main.tmx#plowed": {
