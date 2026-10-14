@@ -30,7 +30,7 @@ public class WaveManager {
     }
 
     public void update(float delta, Player player, TiledMap currentMap) {
-        // Count down the 20-second wave skip timer
+        // Count down the 15-second wave skip timer
         if (waveTimer > 0) {
             waveTimer -= delta;
         }
@@ -58,7 +58,7 @@ public class WaveManager {
 
     public void startNextWave(TiledMap currentMap) {
         currentWave++;
-        waveTimer = 20; // Reset 20-second skip timer
+        waveTimer = 15; // Reset 15-second skip timer
 
         int tier = (currentWave - 1) / 3;
         int waveInBetween = (currentWave - 1) % 3;

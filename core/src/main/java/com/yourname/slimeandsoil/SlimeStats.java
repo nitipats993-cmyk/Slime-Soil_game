@@ -9,6 +9,10 @@ public class SlimeStats {
     private int currentHealth;
     private boolean isDead = false;
 
+    // --- Spawning Invincibility Stat (1.2s warning box + 0.6s spawn anim = 1.8s) ---
+    private boolean isSpawning = true;
+    private float spawnTimer = 1.8f;
+
     // --- Movement Speed Stat (Starts at 2.0, increases slightly each wave) ---
     private float speed;
 
@@ -31,7 +35,15 @@ public class SlimeStats {
     }
 
     public void update(float delta) {
-        // Handle Attack Cooldown
+        // 1. Handle Spawning Invincibility Timer
+        if (spawnTimer > 0) {
+            spawnTimer -= delta;
+            if (spawnTimer <= 0) {
+                isSpawning = false;
+            }
+        }
+
+        // 2. Handle Attack Cooldown
         if (attackCooldownTimer > 0) {
             attackCooldownTimer -= delta;
         }
@@ -41,7 +53,7 @@ public class SlimeStats {
      * Checks if the slime is ready to deal contact damage and resets the cooldown.
      */
     public boolean performAttack() {
-        if (!isDead && attackCooldownTimer <= 0) {
+        if (!isDead && !isSpawning && attackCooldownTimer <= 0) {
             attackCooldownTimer = ATTACK_COOLDOWN;
             return true;
         }
@@ -50,10 +62,10 @@ public class SlimeStats {
 
     /**
      * Takes damage and triggers loot drops when health reaches 0.
-     * Returns true if this hit defeated the slime.
+     * Slime is invincible while isSpawning is true.
      */
     public boolean takeDamage(int damage) {
-        if (isDead) return false;
+        if (isDead || isSpawning) return false;
 
         currentHealth = Math.max(0, currentHealth - damage);
         System.out.println("Slime HP: " + currentHealth + "/" + maxHealth);
@@ -68,25 +80,31 @@ public class SlimeStats {
     }
 
     /**
-     * Medium chance of dropping normal crops, low chance of dropping GemFlower and SkillFlower seeds.
+     * Single roll so each slime death can only drop at most ONE type of seed:
+     * - 08% low chance: SkillFlower Seed
+     * - 12% low chance: GemFlower Seed
+     * - 25% medium chance: Tomato Seed
+     * - 40% high chance: Other Seed
+     * - 15% : Nothing
      */
     private void dropLoot() {
-        // Medium chance (50%) of dropping normal crops
-        if (MathUtils.randomBoolean(0.50f)) {
-            int roll = MathUtils.random(1, 3);
-            if (roll == 1) Inventory.getInstance().addItem("Tomato", 1);
-            if (roll == 2) Inventory.getInstance().addItem("Carrot", 1);
-            if (roll == 3) Inventory.getInstance().addItem("Wheat", 1);
-        }
+        float roll = MathUtils.random();
 
-        // Low chance (15%) of dropping GemFlower Seed
-        if (MathUtils.randomBoolean(0.15f)) {
-            Inventory.getInstance().addItem("GemFlower Seed", 1);
-        }
-
-        // Low chance (10%) of dropping SkillFlower Seed
-        if (MathUtils.randomBoolean(0.10f)) {
+        if (roll < 0.08f) {
             Inventory.getInstance().addItem("SkillFlower Seed", 1);
+            PlayerStats.getInstance().showPickupText("+1 SkillFlower Seed");
+        } else if (roll < 0.20f) {
+            Inventory.getInstance().addItem("GemFlower Seed", 1);
+            PlayerStats.getInstance().showPickupText("+1 GemFlower Seed");
+        } else if (roll < 0.45f) {
+            Inventory.getInstance().addItem("Tomato Seed", 1);
+            PlayerStats.getInstance().showPickupText("+1 Tomato Seed");
+        } else if (roll < 0.85f) {
+            int roll2 = MathUtils.random(1, 2);
+            if (roll2 == 1){ Inventory.getInstance().addItem("Wheat", 1);
+            PlayerStats.getInstance().showPickupText("+1 Wheat");}
+            if (roll2 == 2){ Inventory.getInstance().addItem("Carrot", 1);
+            PlayerStats.getInstance().showPickupText("+1 Carrot Seed");}
         }
     }
 
@@ -96,4 +114,5 @@ public class SlimeStats {
     public float getSpeed() { return speed; }
     public int getBaseDamage() { return baseDamage; }
     public boolean isDead() { return isDead; }
+    public boolean isSpawning() { return isSpawning; }
 }

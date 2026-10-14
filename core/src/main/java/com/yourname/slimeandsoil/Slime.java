@@ -20,6 +20,11 @@ public class Slime {
     // --- Death Animation Variables ---
     private Animation<TextureRegion> deathAnimation;
 
+    // --- Spawn & Warning Box Animation Variables ---
+    private Texture warningTexture;
+    private Animation<TextureRegion> warningAnimation;
+    private Animation<TextureRegion> spawnAnimation;
+
     private float stateTime = 0;
 
     private float x = 5;
@@ -50,11 +55,22 @@ public class Slime {
             (float) 1.0
         );
 
-        // Load the sprite sheet with the explicit assets path
+        // --- Load Warning Box Animation (2 frames) ---
+        warningTexture = new Texture(Gdx.files.internal("assets/objects/Enemies/warning-box.png"));
+
+        int warnFrameWidth = warningTexture.getWidth() / 2;
+        int warnFrameHeight = warningTexture.getHeight();
+
+        TextureRegion warn1 = new TextureRegion(warningTexture, 0, 0, warnFrameWidth, warnFrameHeight);
+        TextureRegion warn2 = new TextureRegion(warningTexture, warnFrameWidth, 0, warnFrameWidth, warnFrameHeight);
+
+        warningAnimation = new Animation<>((float) 0.15, warn1, warn2);
+
+        // --- Load Slime Sprite Sheet (8 columns x 4 rows) ---
         slimeTexture = new Texture(Gdx.files.internal("assets/objects/Enemies/Slime_Green.png"));
 
         int frameWidth = slimeTexture.getWidth() / 8;
-        int frameHeight = slimeTexture.getHeight() / 3;
+        int frameHeight = slimeTexture.getHeight() / 4;
 
         // Slicing Row 1 (Y = 0): Idle Animation (4 frames)
         TextureRegion idle1 = new TextureRegion(slimeTexture, 0, 0, frameWidth, frameHeight);
@@ -87,16 +103,24 @@ public class Slime {
         TextureRegion death8 = new TextureRegion(slimeTexture, frameWidth * 7, frameHeight * 2, frameWidth, frameHeight);
 
         deathAnimation = new Animation<>((float) 0.08, death1, death2, death3, death4, death5, death6, death7, death8);
+
+        // Slicing Row 4 (Y = frameHeight * 3): Spawn Animation (3 frames, 0.2s per frame = 0.6s total)
+        TextureRegion spawn1 = new TextureRegion(slimeTexture, 0, frameHeight * 3, frameWidth, frameHeight);
+        TextureRegion spawn2 = new TextureRegion(slimeTexture, frameWidth, frameHeight * 3, frameWidth, frameHeight);
+        TextureRegion spawn3 = new TextureRegion(slimeTexture, frameWidth * 2, frameHeight * 3, frameWidth, frameHeight);
+
+        spawnAnimation = new Animation<>((float) 0.2, spawn1, spawn2, spawn3);
     }
 
     public void update(float delta, Player player, TiledMap currentMap) {
-        // Time must always pass so walk, idle, and death animations can play
+        // Time must always pass so warning, spawn, walk, idle, and death animations can play
         stateTime += delta;
 
-        // Update slime stats & timers (Attack Cooldown)
+        // Update slime stats & timers (Spawn Timer & Attack Cooldown)
         stats.update(delta);
 
-        if (stats.isDead()) {
+        // Do not move or attack while spawning or dead
+        if (stats.isSpawning() || stats.isDead()) {
             return;
         }
 
@@ -104,7 +128,7 @@ public class Slime {
 
         // 1. Unstuck check: if already overlapping another slime, push them apart
         for (Slime other : WaveManager.getInstance().getSlimes()) {
-            if (other == this || other.getStats().isDead()) continue;
+            if (other == this || other.getStats().isDead() || other.getStats().isSpawning()) continue;
 
             if (Math.abs(x - other.getX()) < (float) 0.7 && Math.abs(y - other.getY()) < (float) 0.7) {
                 if (x <= other.getX()) x -= speed * delta;
@@ -157,9 +181,25 @@ public class Slime {
     }
 
     public void render(SpriteBatch batch) {
+        // 1. Check if currently in the 1.8s Spawning Phase
+        if (stats.isSpawning()) {
+            if (stateTime < (float) 1.2) {
+                // First 1.2s: Draw flashing warning box at normal tile size (1.0x1.0) centered on the 2.0x2.0 slime spot
+                TextureRegion warnFrame = warningAnimation.getKeyFrame(stateTime, true);
+                batch.draw(warnFrame, x + (float) 0.5, y + (float) 0.5, (float) 1.0, (float) 1.0);
+            } else {
+                // Remaining 0.6s: Draw the 3-frame slime spawn animation with the slime's color tint
+                TextureRegion spawnFrame = spawnAnimation.getKeyFrame(stateTime - (float) 1.2, false);
+                batch.setColor(slimeColor);
+                batch.draw(spawnFrame, x, y, width, height);
+                TimeManager.getInstance().applyLightTint(batch);
+            }
+            return;
+        }
+
         TextureRegion currentFrame;
 
-        // 1. Check if dead first, then moving, then idle
+        // 2. Normal state: Check if dead first, then moving, then idle
         if (stats.isDead()) {
             currentFrame = deathAnimation.getKeyFrame(stateTime, false);
         } else if (isMoving) {
@@ -191,8 +231,8 @@ public class Slime {
      */
     private boolean isCollidingWithSlimes(float targetX, float targetY) {
         for (Slime other : WaveManager.getInstance().getSlimes()) {
-            // Skip checking against itself or dead slimes
-            if (other == this || other.getStats().isDead()) {
+            // Skip checking against itself, dead slimes, or slimes still spawning
+            if (other == this || other.getStats().isDead() || other.getStats().isSpawning()) {
                 continue;
             }
 
@@ -209,6 +249,7 @@ public class Slime {
 
     public void dispose() {
         if (slimeTexture != null) slimeTexture.dispose();
+        if (warningTexture != null) warningTexture.dispose();
     }
 
     // --- Getters ---

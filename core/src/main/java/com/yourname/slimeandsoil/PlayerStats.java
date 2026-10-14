@@ -31,6 +31,10 @@ public class PlayerStats {
     private boolean isInvulnerable = false;
     private float invulnerabilityTimer = 0.0f;
 
+    // --- Overhead Seed Pickup Text ---
+    private String pickupText = "";
+    private float pickupTextTimer = 0.0f;
+
     private PlayerStats() {}
 
     public static PlayerStats getInstance() {
@@ -68,6 +72,19 @@ public class PlayerStats {
                 shieldTickTimer = 0.0f;
             }
         }
+
+        // 5. Handle Overhead Pickup Text Timer
+        if (pickupTextTimer > 0) {
+            pickupTextTimer -= delta;
+        }
+    }
+
+    /**
+     * Triggers small floating text above the player's head for 1.5 seconds.
+     */
+    public void showPickupText(String text) {
+        this.pickupText = text;
+        this.pickupTextTimer = 1.5f;
     }
 
     /**
@@ -166,4 +183,6 @@ public class PlayerStats {
     public float getAtkMultiplier() { return atkMultiplier; }
     public int getSwordBaseDamage() { return swordBaseDamage; }
     public boolean isInvulnerable() { return isInvulnerable; }
+    public String getPickupText() { return pickupText; }
+    public float getPickupTextTimer() { return pickupTextTimer; }
 }

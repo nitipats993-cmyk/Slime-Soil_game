@@ -50,16 +50,16 @@ public class HUD {
         WaveManager wm = WaveManager.getInstance();
         if (wm.getCurrentWave() == 0) {
             font.setColor(Color.ORANGE);
-            font.draw(batch, "Wave: Not Started (Press [N] to Start Wave 1)", 25, 615);
+            font.draw(batch, "Wave: Not Started (Press [M] to Start Wave 1)", 25, 615);
         } else {
             int alive = wm.getAliveSlimeCount();
             String skipStatus;
             if (alive == 0) {
                 font.setColor(Color.GREEN);
-                skipStatus = "Wave Clear! Press [N] for Next Wave";
+                skipStatus = "Wave Clear! Press [M] for Next Wave";
             } else if (wm.getWaveTimer() <= 0) {
                 font.setColor(Color.ORANGE);
-                skipStatus = "Press [N] to Skip to Next Wave";
+                skipStatus = "Press [M] to Skip to Next Wave";
             } else {
                 font.setColor(Color.LIGHT_GRAY);
                 skipStatus = String.format("Next Wave Skip in %ds", (int) Math.ceil(wm.getWaveTimer()));
@@ -93,7 +93,7 @@ public class HUD {
         // 6. Hotbar Controls Guide
         font.getData().setScale(1.2f);
         font.setColor(Color.LIGHT_GRAY);
-        font.draw(batch, "[1] Hoe  [2] Tomato Seed  [3] Gem Seed  [4] Skill Seed  [5] Can  |  [Space] Action  [Shift] Dodge  [N] Next Wave  [M] Sleep", 25, 35);
+        font.draw(batch, "[1] Hoe  [2] Tomato Seed  [3] Gem Seed  [4] Skill Seed  [5] Can  |  [Space] Action  [Shift] Dodge  [M] Next Wave  [N] Sleep", 25, 35);
         font.getData().setScale(1.8f);
 
         // 7. Render Warning Dialog Overlay

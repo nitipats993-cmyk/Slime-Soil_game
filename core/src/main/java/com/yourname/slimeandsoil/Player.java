@@ -2,8 +2,10 @@ package com.yourname.slimeandsoil;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -22,9 +24,11 @@ public class Player {
     private Texture slimerDodgeTexture;
     private Animation<TextureRegion> dodgeAnimation;
 
-    private float stateTime = 0; // Removed the 'f' for whole numbers
+    // --- Overhead Pickup Text Font ---
+    private BitmapFont pickupFont;
 
-    // Removed the 'f' suffix; Java handles whole numbers automatically
+    private float stateTime = 0;
+
     private float x = 5;
     private float y = 5;
     private float speed = 4;
@@ -52,28 +56,23 @@ public class Player {
         TextureRegion frame3 = new TextureRegion(slimerTexture, frameWidth * 2, 0, frameWidth, frameHeight);
         TextureRegion frame4 = new TextureRegion(slimerTexture, frameWidth * 3, 0, frameWidth, frameHeight);
 
-        // Pass the individual frames directly into the Animation, using (float) for the decimal
         walkAnimation = new Animation<>((float) 0.15, frame1, frame2, frame3, frame4);
 
         // Load the Idle Animation (Updated for 2 frames)
         slimerIdleTexture = new Texture(Gdx.files.internal("assets/objects/myAssets/slimer_idle.png"));
 
-        // Divide by 2 because there are only 2 frames in the image
         int idleFrameWidth = slimerIdleTexture.getWidth() / 2;
         int idleFrameHeight = slimerIdleTexture.getHeight();
 
         TextureRegion idle1 = new TextureRegion(slimerIdleTexture, 0, 0, idleFrameWidth, idleFrameHeight);
         TextureRegion idle2 = new TextureRegion(slimerIdleTexture, idleFrameWidth, 0, idleFrameWidth, idleFrameHeight);
 
-        // I slowed the idle animation down to 0.4 seconds per frame so it looks like relaxed breathing
         idleAnimation = new Animation<>((float) 0.4, idle1, idle2);
 
         // --- Load Dodge Animation ---
-        // Change "slimer_dodge.png" to match your actual asset filename
         if (Gdx.files.internal("assets/objects/myAssets/slimer_dodge.png").exists()) {
             slimerDodgeTexture = new Texture(Gdx.files.internal("assets/objects/myAssets/slimer_dodge.png"));
 
-            // Adjust the division number which is 6 to match the exact number of frames in your dodge sheet
             int dodgeFrameWidth = slimerDodgeTexture.getWidth() / 6;
             int dodgeFrameHeight = slimerDodgeTexture.getHeight();
 
@@ -88,9 +87,14 @@ public class Player {
             TextureRegion dFrame9 = new TextureRegion(slimerDodgeTexture, dodgeFrameWidth * 2, 0, dodgeFrameWidth, dodgeFrameHeight);
             TextureRegion dFrame10 = new TextureRegion(slimerDodgeTexture, dodgeFrameWidth, 0, dodgeFrameWidth, dodgeFrameHeight);
 
-            // Fast frame rate (0.08s) so the full animation finishes during the 0.35s dodge window
             dodgeAnimation = new Animation<>((float) 0.032, dFrame1, dFrame2, dFrame3, dFrame4, dFrame5, dFrame6, dFrame7, dFrame8, dFrame9, dFrame10);
         }
+
+        // Initialize small overhead font scaled for world tile coordinates
+        pickupFont = new BitmapFont();
+        pickupFont.setUseIntegerPositions(false);
+        pickupFont.getData().setScale((float) 0.035);
+        pickupFont.setColor(Color.PURPLE);
 
         // Equip a default tool to start
         currentTool = new Hoe();
@@ -100,7 +104,7 @@ public class Player {
         // Time must always pass so walk, idle, and dodge animations can play!
         stateTime += delta;
 
-        // Update player stats & timers (Mana, Shield, Dodge CD)
+        // Update player stats & timers (Mana, Shield, Dodge CD, Pickup Text Timer)
         PlayerStats.getInstance().update(delta);
 
         // Block player movement and action inputs while Warning Dialog is open
@@ -123,7 +127,6 @@ public class Player {
             currentSpeed = speed * 2.2f;
         }
 
-        // Create a switch that resets to false at the start of every single frame
         boolean isMoving = false;
 
         // 1. Predict the next position based on input instead of moving immediately
@@ -163,7 +166,6 @@ public class Player {
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_5)) currentTool = new WateringCan();
 
         // 2. Apply movement ONLY if the predicted position is NOT solid
-        // Checking X and Y separately allows the player to slide smoothly along walls
         if (!isSolid(nextX, y, currentMap)) {
             x = nextX;
         }
@@ -173,7 +175,6 @@ public class Player {
 
         // Use the tool, harvest crop, or sell items when SPACE key is pressed
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            // Target the exact grid tile directly underneath the cat's feet (bottom-center)
             float feetX = x + (width / 2.0f);
             float feetY = y + 0.3f;
 
@@ -204,7 +205,7 @@ public class Player {
 
         // 1. Check if dodging first
         if (PlayerStats.getInstance().isInvulnerable() && dodgeAnimation != null) {
-            currentFrame = dodgeAnimation.getKeyFrame(stateTime, false); // false = play once through
+            currentFrame = dodgeAnimation.getKeyFrame(stateTime, false);
         } else if (isMoving) {
             currentFrame = walkAnimation.getKeyFrame(stateTime, true);
         } else {
@@ -217,6 +218,11 @@ public class Player {
         }
 
         batch.draw(currentFrame, x, y, width, height);
+
+        // Draw small seed pickup text above the player's head when active
+        if (PlayerStats.getInstance().getPickupTextTimer() > 0) {
+            pickupFont.draw(batch, PlayerStats.getInstance().getPickupText(), x - (float) 0.2, y + height + (float) 0.2);
+        }
     }
 
     /**
@@ -226,17 +232,14 @@ public class Player {
         TiledMapTileLayer collisionLayer = (TiledMapTileLayer) currentMap.getLayers().get("Collision");
         if (collisionLayer == null) return false;
 
-        // Hitbox scaled to fit 2.0x2.0 character
-        float hitboxWidth = 0.8f;  // 1 tile wide
-        float hitboxHeight = 0.8f; // slightly shorter than 1 tile high
+        float hitboxWidth = 0.8f;
+        float hitboxHeight = 0.8f;
 
-        // Calculate the 4 edges of the hitbox based on the player's center
         float left = targetX + (width / 2) - (hitboxWidth / 2);
         float right = targetX + (width / 2) + (hitboxWidth / 2);
-        float bottom = targetY + 0.1f; // slightly above the absolute bottom pixel
+        float bottom = targetY + 0.1f;
         float top = targetY + hitboxHeight;
 
-        // Check all 4 corners of the hitbox. If ANY of them touch a red tile, block movement.
         return isCellBlocked(collisionLayer, left, bottom) ||
             isCellBlocked(collisionLayer, right, bottom) ||
             isCellBlocked(collisionLayer, left, top) ||
@@ -257,6 +260,7 @@ public class Player {
         if (slimerTexture != null) slimerTexture.dispose();
         if (slimerIdleTexture != null) slimerIdleTexture.dispose();
         if (slimerDodgeTexture != null) slimerDodgeTexture.dispose();
+        if (pickupFont != null) pickupFont.dispose();
     }
 
     // --- Getters for the Camera ---
