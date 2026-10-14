@@ -27,7 +27,6 @@ public class HUD {
     }
 
     public void render(SpriteBatch batch, Player player) {
-        // Update warning dialog input logic
         warningDialog.update();
 
         hudViewport.apply();
@@ -43,11 +42,22 @@ public class HUD {
         font.setColor(Color.YELLOW);
         font.draw(batch, timeString, 25, 695);
 
-        // 2. Equipped Tool Display (Below Clock)
+        // 2. Tool Display
         font.setColor(Color.WHITE);
         font.draw(batch, "Tool: " + player.getCurrentToolName(), 25, 655);
 
-        // 3. Gold & Inventory Trackers (Top Right)
+        // 3. Combat Stats Gauges (Top Center)
+        PlayerStats stats = PlayerStats.getInstance();
+        font.setColor(Color.RED);
+        font.draw(batch, "HP: " + stats.getCurrentHealth() + "/" + stats.getMaxHealth(), 380, 695);
+
+        font.setColor(Color.CYAN);
+        font.draw(batch, "Shield: " + stats.getCurrentShield() + "/" + stats.getMaxShield(), 520, 695);
+
+        font.setColor(Color.BLUE);
+        font.draw(batch, "Mana: " + stats.getCurrentMana() + "/" + stats.getMaxMana(), 680, 695);
+
+        // 4. Gold & Crop Inventory Trackers (Top Right)
         int gold = Inventory.getInstance().getGold();
         int tomatoes = Inventory.getInstance().getItemCount("Tomato");
         int gemFlowers = Inventory.getInstance().getItemCount("GemFlower");
@@ -57,15 +67,15 @@ public class HUD {
         font.draw(batch, "Gold: " + gold + " G", 1080, 695);
 
         font.setColor(Color.GREEN);
-        font.draw(batch, String.format("Tomato: %d | Gem: %d | Skill: %d", tomatoes, gemFlowers, skillFlowers), 600, 695);
+        font.draw(batch, String.format("Tomato: %d | Gem: %d | Skill: %d", tomatoes, gemFlowers, skillFlowers), 830, 655);
 
-        // 4. Hotbar Controls Guide (Bottom Left)
+        // 5. Hotbar Controls Guide
         font.getData().setScale(1.2f);
         font.setColor(Color.LIGHT_GRAY);
-        font.draw(batch, "[1] Hoe  [2] Tomato Seed  [3] Gem Seed  [4] Skill Seed  [5] Can  |  [Space] Action  [N] Sleep", 25, 35);
+        font.draw(batch, "[1] Hoe  [2] Tomato Seed  [3] Gem Seed  [4] Skill Seed  [5] Can  |  [Space] Action  [Shift] Dodge  [N] Sleep", 25, 35);
         font.getData().setScale(1.8f);
 
-        // 5. Render Warning Dialog Overlay if active
+        // 6. Render Warning Dialog Overlay
         if (warningDialog.isActive()) {
             warningDialog.render(batch, font);
         }

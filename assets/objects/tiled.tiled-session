@@ -1,5 +1,5 @@
 {
-    "activeFile": "trainer.tsx",
+    "activeFile": "main.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -24,7 +24,7 @@
             "selectedLayer": 2,
             "viewCenter": {
                 "x": 240,
-                "y": 159.66666666666663
+                "y": 159.66666666666666
             }
         },
         "../objectsFromBall/untitled.tmx#red2.0": {
@@ -118,11 +118,11 @@
             "expandedObjectLayers": [
                 15
             ],
-            "scale": 4,
-            "selectedLayer": 1,
+            "scale": 2,
+            "selectedLayer": 5,
             "viewCenter": {
-                "x": 502.25,
-                "y": 178.625
+                "x": 285,
+                "y": 231.25
             }
         },
         "main.tmx#plowed": {
@@ -218,18 +218,18 @@
     "project": "tiled.tiled-project",
     "property.type": "bool",
     "recentFiles": [
-        "main.tmx",
-        "combined.tsx",
-        "farmland.tsx",
-        "house.tsx",
-        "objects.tsx",
-        "Outdoor_Decor_Free.tsx",
-        "Path_Tile.tsx",
-        "pathtile.tsx",
-        "tileset.tsx",
-        "fenceobjects.tsx",
+        "trainer.tsx",
+        "Player.tsx",
+        "smallcrate.tsx",
+        "crate.tsx",
+        "../objectsFromBall/untitled.tmx",
+        "plowed.tsx",
+        "lime.tsx",
+        "tree.tsx",
+        "red2.0 8x8.tsx",
         "red2.0.tsx",
-        "red2.0 8x8.tsx"
+        "fenceobjects.tsx",
+        "tileset.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {

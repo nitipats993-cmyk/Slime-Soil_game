@@ -16,6 +16,7 @@
  </tileset>
  <tileset firstgid="689" source="Player.tsx"/>
  <tileset firstgid="749" source="trainer.tsx"/>
+ <tileset firstgid="809" source="smallcrate.tsx"/>
  <layer id="1" name="ground layer" width="30" height="30">
   <data encoding="base64" compression="zlib">
    eJyTY2BgkBvFo3gUj+JhhFWBWA2I1YFYA4g1sfC1kNTnMTEw5ANxARNl9roDcRgTfuxDA3szibA3jwb2dhNh7wQS7M1hwo5z0dSvJcLeTSTYm8+EHaOrp3b8FjGh4lIc6mkdv7jUUzt+ibWX2vFLrL3ngfgCEF8E4ktAfBkL/woJ9rKiYWT16HKkYFLNGan2luMoT4jFFWTaSy1MrL2FTJhlCSW4mML4GsVDEwMAe0adug==
@@ -23,7 +24,7 @@
  </layer>
  <layer id="6" name="decorations" width="30" height="30">
   <data encoding="base64" compression="zlib">
-   eJzdlz0OwjAMhUMlYCksSFwDWGBjYuVOvRIH4wqIVFApSv3z3Lqh4lud2Imf67ghfHgtAsS64m17wcbRxs1j7wb4SdmA+7cj45RmCZyXyudQDjHe0ZAjTseV4OM6Aw2kvGq1xO1FNfDSKvVH+Uw14NbcZqAFxRM8V+10/vuP8yD12NPXhvQCCqTevGuy8yn5ze3S+inOp+HVV6VeWAKvbwTlYYw3ZX5K3L1UbeZxLPXZrstnn3PVX0PtG3M/aw9AQGe9f6R7C7ScWkBnb60/I1pegFjaOxfn0ybOqY3uSQbJk+W/ROpjdaKbRR9pLvDiDaHiMz8=
+   eJzdlzEOwjAMRUMRsBQWJO7ABF1gY2LlTr0SB+MKiFRQKQqx/d06oeKtTuzE33Vc5948Zw5iVdG2HWOj6OLGsbcD/ISswf2bkXFKswDOm8rnUA4+3lGRI0rHJePjMgENuLxKtUTtRTWw0ir0l/IZakCtuU5AixQP8Fy10flvP84D12Objw3pBSmQerOuyd4n5ze2c+tznE/Cqq9yvTA3+7ndN4JyV8bLmZ8Sdy9Vm3EcTX126+LZ51R9r0ntG3M/bQ9AQGe9f6R/C6ScakBnb6k/I1qegVjSO+fn09bPqa3siQfJk+a/hOtjdaCbRh9uLrDiBbAeM2s=
   </data>
  </layer>
  <layer id="3" name="background" width="30" height="30">
@@ -43,7 +44,7 @@
  </layer>
  <layer id="11" name="Collision" width="30" height="30" visible="0">
   <data encoding="base64" compression="zlib">
-   eJzllUsKwCAMRKX39u5dFYLoZPJ10YALa5w3RGvmM8a8OLTI0lm1rNyIt+z6rGunXEtt5B5mP/KJ/FvPzMPV9lkYUe63zkQ21xLoDCu5iKl52tVql4s0vL7QPWP0vNyIZtU7mc1lc//EZfVYZjdXsruj8n9ndOS8Ixi/N97viO4NLuLIOeOxipulKb+f5uy9QnXxnJHWbzN7JOJGer4l//T+dIwXfNmKag==
+   eJzllUsKwCAMRKX39u5dFYLoZPJ10YALa5w3RGvmM8a8OLTI0lm1rNyIt+z6rGunXEtt5B5mP/KJ/FvPzMPV9lkYUe63zkQ21xLoDCu5iKl52tVql4s0vL7QPWP0vNyIZtU7mc1lc//EZfUYXjd35XdH5f/O6Mh5RzB+b7zfEd0bXMSRc8ZjFTdLU34/zdl7heriOSOt32b2SMSN9HxL/un96RgviOCK6Q==
   </data>
  </layer>
  <layer id="13" name="Soil" width="30" height="30">

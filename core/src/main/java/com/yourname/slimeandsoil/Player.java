@@ -18,6 +18,10 @@ public class Player {
     private Texture slimerIdleTexture;
     private Animation<TextureRegion> idleAnimation;
 
+    // --- Dodge Animation Variables ---
+    private Texture slimerDodgeTexture;
+    private Animation<TextureRegion> dodgeAnimation;
+
     private float stateTime = 0; // Removed the 'f' for whole numbers
 
     // Removed the 'f' suffix; Java handles whole numbers automatically
@@ -64,17 +68,59 @@ public class Player {
         // I slowed the idle animation down to 0.4 seconds per frame so it looks like relaxed breathing
         idleAnimation = new Animation<>((float) 0.4, idle1, idle2);
 
+        // --- Load Dodge Animation ---
+        // Change "slimer_dodge.png" to match your actual asset filename
+        if (Gdx.files.internal("assets/objects/myAssets/slimer_dodge.png").exists()) {
+            slimerDodgeTexture = new Texture(Gdx.files.internal("assets/objects/myAssets/slimer_dodge.png"));
+
+            // Adjust the division number which is 6 to match the exact number of frames in your dodge sheet
+            int dodgeFrameWidth = slimerDodgeTexture.getWidth() / 6;
+            int dodgeFrameHeight = slimerDodgeTexture.getHeight();
+
+            TextureRegion dFrame1 = new TextureRegion(slimerDodgeTexture, 0, 0, dodgeFrameWidth, dodgeFrameHeight);
+            TextureRegion dFrame2 = new TextureRegion(slimerDodgeTexture, dodgeFrameWidth, 0, dodgeFrameWidth, dodgeFrameHeight);
+            TextureRegion dFrame3 = new TextureRegion(slimerDodgeTexture, dodgeFrameWidth * 2, 0, dodgeFrameWidth, dodgeFrameHeight);
+            TextureRegion dFrame4 = new TextureRegion(slimerDodgeTexture, dodgeFrameWidth * 3, 0, dodgeFrameWidth, dodgeFrameHeight);
+            TextureRegion dFrame5 = new TextureRegion(slimerDodgeTexture, dodgeFrameWidth * 4, 0, dodgeFrameWidth, dodgeFrameHeight);
+            TextureRegion dFrame6 = new TextureRegion(slimerDodgeTexture, dodgeFrameWidth * 5, 0, dodgeFrameWidth, dodgeFrameHeight);
+            TextureRegion dFrame7 = new TextureRegion(slimerDodgeTexture, dodgeFrameWidth * 4, 0, dodgeFrameWidth, dodgeFrameHeight);
+            TextureRegion dFrame8 = new TextureRegion(slimerDodgeTexture, dodgeFrameWidth * 3, 0, dodgeFrameWidth, dodgeFrameHeight);
+            TextureRegion dFrame9 = new TextureRegion(slimerDodgeTexture, dodgeFrameWidth * 2, 0, dodgeFrameWidth, dodgeFrameHeight);
+            TextureRegion dFrame10 = new TextureRegion(slimerDodgeTexture, dodgeFrameWidth, 0, dodgeFrameWidth, dodgeFrameHeight);
+
+            // Fast frame rate (0.08s) so the full animation finishes during the 0.35s dodge window
+            dodgeAnimation = new Animation<>((float) 0.032, dFrame1, dFrame2, dFrame3, dFrame4, dFrame5, dFrame6, dFrame7, dFrame8, dFrame9, dFrame10);
+        }
+
         // Equip a default tool to start
         currentTool = new Hoe();
     }
 
     public void update(float delta, TiledMap currentMap, HUD hud) {
-        // Time must always pass so both walk and idle animations can play!
+        // Time must always pass so walk, idle, and dodge animations can play!
         stateTime += delta;
+
+        // Update player stats & timers (Mana, Shield, Dodge CD)
+        PlayerStats.getInstance().update(delta);
 
         // Block player movement and action inputs while Warning Dialog is open
         if (hud != null && hud.getWarningDialog() != null && hud.getWarningDialog().isActive()) {
             return;
+        }
+
+        // --- Dodge Mechanic (Press Shift) ---
+        float currentSpeed = speed;
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT)) {
+            boolean dodged = PlayerStats.getInstance().performDodge();
+            if (dodged) {
+                stateTime = 0; // Reset animation time so dodge roll starts from Frame 1
+                System.out.println("Dodged! (-5 Mana)");
+            }
+        }
+
+        // Apply speed boost during active invulnerability frames (dodge roll)
+        if (PlayerStats.getInstance().isInvulnerable()) {
+            currentSpeed = speed * 2.2f;
         }
 
         // Create a switch that resets to false at the start of every single frame
@@ -86,24 +132,24 @@ public class Player {
 
         // Movement & Direction Tracking
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            nextY += speed * delta;
+            nextY += currentSpeed * delta;
             currentDirection = Direction.UP;
             isMoving = true;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-            nextY -= speed * delta;
+            nextY -= currentSpeed * delta;
             currentDirection = Direction.DOWN;
             isMoving = true;
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-            nextX -= speed * delta;
+            nextX -= currentSpeed * delta;
             isFacingRight = false;
             currentDirection = Direction.LEFT;
             isMoving = true;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-            nextX += speed * delta;
+            nextX += currentSpeed * delta;
             isFacingRight = true;
             currentDirection = Direction.RIGHT;
             isMoving = true;
@@ -151,24 +197,25 @@ public class Player {
     }
 
     public void render(SpriteBatch batch) {
-        // Determine if moving based on current key presses for the animation state
         boolean isMoving = Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.S) ||
             Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.D);
 
         TextureRegion currentFrame;
-        // If moving, play the walk animation. If standing still, play the idle animation!
-        if (isMoving) {
+
+        // 1. Check if dodging first
+        if (PlayerStats.getInstance().isInvulnerable() && dodgeAnimation != null) {
+            currentFrame = dodgeAnimation.getKeyFrame(stateTime, false); // false = play once through
+        } else if (isMoving) {
             currentFrame = walkAnimation.getKeyFrame(stateTime, true);
         } else {
             currentFrame = idleAnimation.getKeyFrame(stateTime, true);
         }
 
-        // Now it will properly flip when isFacingRight is true
+        // Flip frame horizontally depending on facing direction
         if (currentFrame.isFlipX() != isFacingRight) {
             currentFrame.flip(true, false);
         }
 
-        // We don't call batch.begin() here because GameScreen manages the batch
         batch.draw(currentFrame, x, y, width, height);
     }
 
@@ -209,6 +256,7 @@ public class Player {
     public void dispose() {
         if (slimerTexture != null) slimerTexture.dispose();
         if (slimerIdleTexture != null) slimerIdleTexture.dispose();
+        if (slimerDodgeTexture != null) slimerDodgeTexture.dispose();
     }
 
     // --- Getters for the Camera ---
