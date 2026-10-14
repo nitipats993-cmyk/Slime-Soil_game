@@ -20,6 +20,9 @@
             "scaleInDock": 1
         },
         "../objectsFromBall/untitled.tmx": {
+            "expandedObjectLayers": [
+                8
+            ],
             "scale": 1.5,
             "selectedLayer": 2,
             "viewCenter": {
@@ -70,6 +73,10 @@
         "Tiled1.tsx": {
             "scaleInDock": 1
         },
+        "chicken-white.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 8
+        },
         "combined.tsx": {
             "dynamicWrapping": false,
             "scaleInDock": 0.75,
@@ -118,11 +125,11 @@
             "expandedObjectLayers": [
                 15
             ],
-            "scale": 2,
+            "scale": 4,
             "selectedLayer": 5,
             "viewCenter": {
-                "x": 285,
-                "y": 231.25
+                "x": 238.25,
+                "y": 334.625
             }
         },
         "main.tmx#plowed": {
@@ -185,10 +192,24 @@
             "dynamicWrapping": false,
             "scaleInDock": 1,
             "scaleInEditor": 1
+        },
+        "untitled.tmx": {
+            "scale": 1.6268749999999998,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 239.7233960814445,
+                "y": 160.12293507491356
+            }
+        },
+        "untitled.tmx#red2.0": {
+            "scaleInDock": 1
+        },
+        "untitled.tmx#tree": {
+            "scaleInDock": 1
         }
     },
     "frame.defaultDuration": 500,
-    "last.imagePath": "C:/Users/Patch/Desktop/261200 OOP/SlimeAndSoil/assets/objects/myAssets",
+    "last.imagePath": "C:/Users/Patch/Desktop/261200 OOP/SlimeAndSoil/assets/cozy-farm-lite/animals/1x",
     "map.lastUsedFormat": "tmx",
     "map.layerDataFormat": "3",
     "map.tileHeight": 16,
@@ -213,11 +234,13 @@
         "crate.tsx",
         "smallcrate.tsx",
         "Player.tsx",
-        "trainer.tsx"
+        "trainer.tsx",
+        "chicken-white.tsx"
     ],
     "project": "tiled.tiled-project",
-    "property.type": "bool",
+    "property.type": "float",
     "recentFiles": [
+        "chicken-white.tsx",
         "trainer.tsx",
         "Player.tsx",
         "smallcrate.tsx",
@@ -228,13 +251,12 @@
         "tree.tsx",
         "red2.0 8x8.tsx",
         "red2.0.tsx",
-        "fenceobjects.tsx",
-        "tileset.tsx"
+        "fenceobjects.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {
-        "height": 32,
-        "width": 32
+        "height": 16,
+        "width": 16
     },
     "tileset.type": 0
 }

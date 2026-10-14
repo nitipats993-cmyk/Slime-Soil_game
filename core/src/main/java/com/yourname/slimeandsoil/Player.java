@@ -39,6 +39,11 @@ public class Player {
     public enum Direction { UP, DOWN, LEFT, RIGHT }
     private Direction currentDirection = Direction.DOWN; // Default facing direction
 
+    // Sword Swinging
+    private boolean isAttacking = false;
+    private float attackTimer = 0.0f;
+    private static final float ATTACK_DURATION = 0.20f; // 0.2s quick sword swing
+
     public Player() {
         // Load the sprite sheet with the explicit assets path
         slimerTexture = new Texture(Gdx.files.internal("assets/objects/myAssets/slimer.png"));
@@ -69,11 +74,9 @@ public class Player {
         idleAnimation = new Animation<>((float) 0.4, idle1, idle2);
 
         // --- Load Dodge Animation ---
-        // Change "slimer_dodge.png" to match your actual asset filename
         if (Gdx.files.internal("assets/objects/myAssets/slimer_dodge.png").exists()) {
             slimerDodgeTexture = new Texture(Gdx.files.internal("assets/objects/myAssets/slimer_dodge.png"));
 
-            // Adjust the division number which is 6 to match the exact number of frames in your dodge sheet
             int dodgeFrameWidth = slimerDodgeTexture.getWidth() / 6;
             int dodgeFrameHeight = slimerDodgeTexture.getHeight();
 
@@ -96,6 +99,11 @@ public class Player {
         currentTool = new Hoe();
     }
 
+    public void setPosition(float newX, float newY) {
+        this.x = newX;
+        this.y = newY;
+    }
+
     public void update(float delta, TiledMap currentMap, HUD hud) {
         // Time must always pass so walk, idle, and dodge animations can play!
         stateTime += delta;
@@ -103,9 +111,30 @@ public class Player {
         // Update player stats & timers (Mana, Shield, Dodge CD)
         PlayerStats.getInstance().update(delta);
 
-        // Block player movement and action inputs while Warning Dialog is open
-        if (hud != null && hud.getWarningDialog() != null && hud.getWarningDialog().isActive()) {
-            return;
+        // Block player movement and action inputs while any UI Dialog is open
+        if (hud != null) {
+            if ((hud.getWarningDialog() != null && hud.getWarningDialog().isActive()) ||
+                (hud.getSkillShopDialog() != null && hud.getSkillShopDialog().isActive()) ||
+                (hud.getSwordShopDialog() != null && hud.getSwordShopDialog().isActive()) ||
+                (hud.getTransitionDialog() != null && hud.getTransitionDialog().isActive())) {
+                return;
+            }
+        }
+
+        // --- Sword Attack Trigger (Press J or Left Click) ---
+        if (Gdx.input.isKeyJustPressed(Input.Keys.J) || Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+            if (!isAttacking) {
+                isAttacking = true;
+                attackTimer = 0.0f;
+                executeSwordAttack();
+            }
+        }
+
+        if (isAttacking) {
+            attackTimer += delta;
+            if (attackTimer >= ATTACK_DURATION) {
+                isAttacking = false;
+            }
         }
 
         // --- Dodge Mechanic (Press Shift) ---
@@ -155,15 +184,16 @@ public class Player {
             isMoving = true;
         }
 
-        // --- Tool Switching (Press 1, 2, 3, 4, or 5) ---
+        // --- Tool & Seed Switching (Keys 1 through 7) ---
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) currentTool = new Hoe();
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) currentTool = new Seed("Tomato");
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) currentTool = new Seed("GemFlower");
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_4)) currentTool = new Seed("SkillFlower");
-        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_5)) currentTool = new WateringCan();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_5)) currentTool = new Seed("Carrot");
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_6)) currentTool = new Seed("Wheat");
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_7)) currentTool = new WateringCan();
 
         // 2. Apply movement ONLY if the predicted position is NOT solid
-        // Checking X and Y separately allows the player to slide smoothly along walls
         if (!isSolid(nextX, y, currentMap)) {
             x = nextX;
         }
@@ -171,19 +201,47 @@ public class Player {
             y = nextY;
         }
 
-        // Use the tool, harvest crop, or sell items when SPACE key is pressed
+        // Use tool, harvest crop, sell items, or transition maps on SPACE key
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            // Target the exact grid tile directly underneath the cat's feet (bottom-center)
             float feetX = x + (width / 2.0f);
             float feetY = y + 0.3f;
 
             int targetGridX = (int) Math.floor(feetX);
             int targetGridY = (int) Math.floor(feetY);
 
-            // 4. Check if interacting with Shipping Bin selling area
+            // 1. Check Map Transitions (Prompt Warning Dialog)
+            if (GameScreen.getInstance() != null) {
+                MapTransition transition = GameScreen.getInstance().checkTransition(feetX, feetY);
+                if (transition != null && hud != null) {
+                    hud.getTransitionDialog().open(
+                        transition.getTargetMap(),
+                        transition.getSpawnX(),
+                        transition.getSpawnY()
+                    );
+                    return;
+                }
+            }
+
+            // 2. Check Shipping Bin selling area
             if (ShippingBin.getInstance().isBinLocation(targetGridX, targetGridY)) {
                 if (hud != null) {
                     ShippingBin.getInstance().interact(hud.getWarningDialog());
+                }
+                return;
+            }
+
+            // 3. Check Skill Shop (Trainer NPC)
+            if (SkillShop.getInstance().isShopLocation(targetGridX, targetGridY)) {
+                if (hud != null) {
+                    hud.getSkillShopDialog().open();
+                }
+                return;
+            }
+
+            // 4. Check Sword Shop (Blacksmith NPC)
+            if (SwordShop.getInstance().isShopLocation(targetGridX, targetGridY)) {
+                if (hud != null) {
+                    hud.getSwordShopDialog().open();
                 }
                 return;
             }
@@ -196,56 +254,89 @@ public class Player {
         }
     }
 
+    private void executeSwordAttack() {
+        float feetX = x + (width / 2.0f);
+        float feetY = y + 0.3f;
+
+        float attackX = feetX;
+        float attackY = feetY;
+        if (currentDirection == Direction.UP) attackY += 1.0f;
+        if (currentDirection == Direction.DOWN) attackY -= 1.0f;
+        if (currentDirection == Direction.LEFT) attackX -= 1.0f;
+        if (currentDirection == Direction.RIGHT) attackX += 1.0f;
+
+        int totalDmg = PlayerStats.getInstance().getTotalAttackDamage();
+        System.out.println("Attacked facing " + currentDirection + " dealing " + totalDmg + " damage!");
+    }
+
     public void render(SpriteBatch batch) {
         boolean isMoving = Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.S) ||
             Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.D);
 
         TextureRegion currentFrame;
 
-        // 1. Check if dodging first
         if (PlayerStats.getInstance().isInvulnerable() && dodgeAnimation != null) {
-            currentFrame = dodgeAnimation.getKeyFrame(stateTime, false); // false = play once through
+            currentFrame = dodgeAnimation.getKeyFrame(stateTime, false);
         } else if (isMoving) {
             currentFrame = walkAnimation.getKeyFrame(stateTime, true);
         } else {
             currentFrame = idleAnimation.getKeyFrame(stateTime, true);
         }
 
-        // Flip frame horizontally depending on facing direction
         if (currentFrame.isFlipX() != isFacingRight) {
             currentFrame.flip(true, false);
         }
 
         batch.draw(currentFrame, x, y, width, height);
+
+        if (isAttacking) {
+            Texture swordTex = SwordData.getSwordTexture(PlayerStats.getInstance().getSwordTier());
+            if (swordTex != null) {
+                float progress = attackTimer / ATTACK_DURATION;
+                float baseAngle = 0;
+                if (currentDirection == Direction.UP) baseAngle = 90;
+                if (currentDirection == Direction.DOWN) baseAngle = 270;
+                if (currentDirection == Direction.LEFT) baseAngle = 180;
+                if (currentDirection == Direction.RIGHT) baseAngle = 0;
+
+                float swingAngle = baseAngle + (60.0f - (progress * 120.0f));
+
+                float handX = x + (width / 2.0f) - 0.5f;
+                float handY = y + (height / 2.0f) - 0.5f;
+
+                batch.draw(
+                    swordTex,
+                    handX, handY,
+                    0.5f, 0.5f,
+                    1.5f, 1.5f,
+                    1.0f, 1.0f,
+                    swingAngle,
+                    0, 0,
+                    swordTex.getWidth(), swordTex.getHeight(),
+                    false, false
+                );
+            }
+        }
     }
 
-    /**
-     * Checks if a specific map coordinate has a tile on the "Collision" layer.
-     */
     private boolean isSolid(float targetX, float targetY, TiledMap currentMap) {
         TiledMapTileLayer collisionLayer = (TiledMapTileLayer) currentMap.getLayers().get("Collision");
         if (collisionLayer == null) return false;
 
-        // Hitbox scaled to fit 2.0x2.0 character
-        float hitboxWidth = 0.8f;  // 1 tile wide
-        float hitboxHeight = 0.8f; // slightly shorter than 1 tile high
+        float hitboxWidth = 0.8f;
+        float hitboxHeight = 0.8f;
 
-        // Calculate the 4 edges of the hitbox based on the player's center
         float left = targetX + (width / 2) - (hitboxWidth / 2);
         float right = targetX + (width / 2) + (hitboxWidth / 2);
-        float bottom = targetY + 0.1f; // slightly above the absolute bottom pixel
+        float bottom = targetY + 0.1f;
         float top = targetY + hitboxHeight;
 
-        // Check all 4 corners of the hitbox. If ANY of them touch a red tile, block movement.
         return isCellBlocked(collisionLayer, left, bottom) ||
             isCellBlocked(collisionLayer, right, bottom) ||
             isCellBlocked(collisionLayer, left, top) ||
             isCellBlocked(collisionLayer, right, top);
     }
 
-    /**
-     * Helper method: Asks the map if a specific X/Y coordinate has a painted tile.
-     */
     private boolean isCellBlocked(TiledMapTileLayer layer, float x, float y) {
         int tileX = (int) Math.floor(x);
         int tileY = (int) Math.floor(y);
@@ -259,13 +350,11 @@ public class Player {
         if (slimerDodgeTexture != null) slimerDodgeTexture.dispose();
     }
 
-    // --- Getters for the Camera ---
     public float getX() { return x; }
     public float getY() { return y; }
     public float getWidth() { return width; }
     public float getHeight() { return height; }
 
-    // --- Getters for HUD ---
     public String getCurrentToolName() {
         return (currentTool != null) ? currentTool.getName() : "None";
     }

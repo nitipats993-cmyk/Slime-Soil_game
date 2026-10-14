@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="16" nextobjectid="130">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="16" nextobjectid="132">
  <tileset firstgid="1" source="tileset.tsx"/>
  <tileset firstgid="19" source="combined.tsx"/>
  <tileset firstgid="495" source="objects.tsx"/>
@@ -17,6 +17,7 @@
  <tileset firstgid="689" source="Player.tsx"/>
  <tileset firstgid="749" source="trainer.tsx"/>
  <tileset firstgid="809" source="smallcrate.tsx"/>
+ <tileset firstgid="810" source="chicken-white.tsx"/>
  <layer id="1" name="ground layer" width="30" height="30">
   <data encoding="base64" compression="zlib">
    eJyTY2BgkBvFo3gUj+JhhFWBWA2I1YFYA4g1sfC1kNTnMTEw5ANxARNl9roDcRgTfuxDA3szibA3jwb2dhNh7wQS7M1hwo5z0dSvJcLeTSTYm8+EHaOrp3b8FjGh4lIc6mkdv7jUUzt+ibWX2vFLrL3ngfgCEF8E4ktAfBkL/woJ9rKiYWT16HKkYFLNGan2luMoT4jFFWTaSy1MrL2FTJhlCSW4mML4GsVDEwMAe0adug==
@@ -24,7 +25,7 @@
  </layer>
  <layer id="6" name="decorations" width="30" height="30">
   <data encoding="base64" compression="zlib">
-   eJzdlzEOwjAMRUMRsBQWJO7ABF1gY2LlTr0SB+MKiFRQKQqx/d06oeKtTuzE33Vc5948Zw5iVdG2HWOj6OLGsbcD/ISswf2bkXFKswDOm8rnUA4+3lGRI0rHJePjMgENuLxKtUTtRTWw0ir0l/IZakCtuU5AixQP8Fy10flvP84D12Objw3pBSmQerOuyd4n5ze2c+tznE/Cqq9yvTA3+7ndN4JyV8bLmZ8Sdy9Vm3EcTX126+LZ51R9r0ntG3M/bQ9AQGe9f6R/C6ScakBnb6k/I1qegVjSO+fn09bPqa3siQfJk+a/hOtjdaCbRh9uLrDiBbAeM2s=
+   eJzdVzsOwjAMDa2ApbAgcQdYCgtsTKzcqVfiYEzsiFa0UhT8TZ1Q8dbYfo6f67jOffCaORGWBX62Jc4wdLwh9yYijo+V0H89kic35oJ8oXrGom75DooaYTouiBiXCWhA1ZXrJcxXqoGVVn48KKavAWZznYAWEB7CvCqj/G8/rgM1Y4/9mWQWQOD6bV/a9+TAi8V9Fq7R2KfIj4PVXKVmYWrsSrtvRIq7ki9lfXLcPVdvhjya/uzswt3nVHzbQH5j7sf5x8SX7nr/iOEt4GqqgXT35uazRMuzgIt759r9tKmB90MLSZ00/yXUHKs83TT6UHuBFd4YhTMP
   </data>
  </layer>
  <layer id="3" name="background" width="30" height="30">
@@ -44,7 +45,7 @@
  </layer>
  <layer id="11" name="Collision" width="30" height="30" visible="0">
   <data encoding="base64" compression="zlib">
-   eJzllUsKwCAMRKX39u5dFYLoZPJ10YALa5w3RGvmM8a8OLTI0lm1rNyIt+z6rGunXEtt5B5mP/KJ/FvPzMPV9lkYUe63zkQ21xLoDCu5iKl52tVql4s0vL7QPWP0vNyIZtU7mc1lc//EZfUYXjd35XdH5f/O6Mh5RzB+b7zfEd0bXMSRc8ZjFTdLU34/zdl7heriOSOt32b2SMSN9HxL/un96RgviOCK6Q==
+   eJzlllEOwCAIQ83u7d33a8yAdhRcMhI/FrGvolPnNcY82KJQ6exaLDfjTV2fvc/KZWqzjkHGez7ZdWH9RdyKyHAznrrm661hV52j/Y/0P+V6GgpflodMzle4Ck2Gi8bfuAq9N3tfwd353cFymbuY4XbNHfFbeX5X6J7gRrFyO/nV7xzrO/uezHhC38JKL+j/q66Jdf50tBt+RHYT
   </data>
  </layer>
  <layer id="13" name="Soil" width="30" height="30">
@@ -58,7 +59,24 @@
     <property name="isShippingBin" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="129" x="416.545" y="111.818" width="47.4545" height="48.1818"/>
+  <object id="129" x="416.545" y="111.818" width="47.4545" height="48.1818">
+   <properties>
+    <property name="isSwordShop" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="130" x="416.667" y="191.667" width="47.3333" height="49">
+   <properties>
+    <property name="isSkillShop" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="131" x="2" y="224.667" width="74.6667" height="41.3333">
+   <properties>
+    <property name="isTransition" type="bool" value="true"/>
+    <property name="spawnX" type="float" value="27"/>
+    <property name="spawnY" type="float" value="9.5"/>
+    <property name="targetMap" value="assets/objectsFromBall/untitled.tmx"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup id="14" name="Lights">
   <object id="120" x="56.5" y="304">

@@ -4,6 +4,9 @@ public class PlayerStats {
 
     private static PlayerStats instance;
 
+    // --- Skill Points ---
+    private int skillPoints = 1;
+
     // --- Health Stat (Start: 5, Max Upgrade: 20) ---
     private int maxHealth = 5;
     private int currentHealth = 5;
@@ -12,22 +15,23 @@ public class PlayerStats {
     private int maxShield = 2;
     private int currentShield = 2;
     private float shieldRegenTimer = 0.0f;
-    private static final float SHIELD_REGEN_DELAY = 3.0f; // Seconds after taking hit before shield regens
+    private static final float SHIELD_REGEN_DELAY = 3.0f;
     private float shieldTickTimer = 0.0f;
 
-    // --- Mana Stat (Start: 200, Max Upgrade: 400, Increments of +20) ---
+    // --- Mana Stat (Start: 5, Max Upgrade: 25) ---
     private int maxMana = 5;
     private float currentMana = 5.0f;
-    private static final float MANA_REGEN_RATE = 1.0f; // Mana regenerated per second
+    private static final float MANA_REGEN_RATE = 1.0f; // i feel llike 1 sec is good no?
 
     // --- Attack Damage Stat ---
-    private float atkMultiplier = 1.0f; // Start: 1.0x, Max Upgrade: 2.5x
-    private int swordBaseDamage = 3;   // Swords give +3, +5, +9
+    private float atkMultiplier = 1.0f;
+    private int swordTier = 0;     // 0: Wooden, 1: Iron, ..., 6: ???
+    private int swordSubLevel = 0; // 0 to 5 sub-upgrades per tier
 
     // --- Dodge Mechanic Stat ---
     private float dodgeCooldownTimer = 0.0f;
-    private static final float DODGE_COOLDOWN = 1.0f; // 1 second cooldown
-    private static final int DODGE_MANA_COST = 5;      // Costs 5 Mana
+    private static final float DODGE_COOLDOWN = 1.0f;
+    private static final int DODGE_MANA_COST = 5;
     private boolean isInvulnerable = false;
     private float invulnerabilityTimer = 0.0f;
 
@@ -41,25 +45,17 @@ public class PlayerStats {
     }
 
     public void update(float delta) {
-        // 1. Handle Dodge Cooldown
-        if (dodgeCooldownTimer > 0) {
-            dodgeCooldownTimer -= delta;
-        }
+        if (dodgeCooldownTimer > 0) dodgeCooldownTimer -= delta;
 
-        // 2. Handle Invulnerability Frames (i-frames)
         if (invulnerabilityTimer > 0) {
             invulnerabilityTimer -= delta;
-            if (invulnerabilityTimer <= 0) {
-                isInvulnerable = false;
-            }
+            if (invulnerabilityTimer <= 0) isInvulnerable = false;
         }
 
-        // 3. Mana Regeneration Over Time
         if (currentMana < maxMana) {
             currentMana = Math.min(maxMana, currentMana + (MANA_REGEN_RATE * delta));
         }
 
-        // 4. Soul Knight Shield Regeneration (Regens 1 shield/sec after 3s delay)
         shieldRegenTimer += delta;
         if (shieldRegenTimer >= SHIELD_REGEN_DELAY && currentShield < maxShield) {
             shieldTickTimer += delta;
@@ -70,27 +66,21 @@ public class PlayerStats {
         }
     }
 
-    /**
-     * Executes Dodge if player has enough Mana and Dodge is off cooldown.
-     */
     public boolean performDodge() {
         if (dodgeCooldownTimer <= 0 && currentMana >= DODGE_MANA_COST) {
             currentMana -= DODGE_MANA_COST;
             dodgeCooldownTimer = DODGE_COOLDOWN;
             isInvulnerable = true;
-            invulnerabilityTimer = 0.35f; // 0.35s of i-frames during dash
+            invulnerabilityTimer = 0.35f;
             return true;
         }
         return false;
     }
 
-    /**
-     * Takes damage: Shield absorbs damage first; excess leaks to Health.
-     */
     public void takeDamage(int damage) {
         if (isInvulnerable) return;
 
-        shieldRegenTimer = 0.0f; // Reset shield regen timer when hit
+        shieldRegenTimer = 0.0f;
         shieldTickTimer = 0.0f;
 
         if (currentShield > 0) {
@@ -104,59 +94,86 @@ public class PlayerStats {
         }
 
         currentHealth = Math.max(0, currentHealth - damage);
-        if (currentHealth == 0) {
-            System.out.println("Player Defeated!");
-        }
     }
 
-    /**
-     * Total Damage = (Sword Base Atk) * (Atk Multiplier)
-     */
+    public int getBaseSwordDamage() {
+        return SwordData.calculateDamage(swordTier, swordSubLevel);
+    }
+
     public int getTotalAttackDamage() {
-        return Math.round(swordBaseDamage * atkMultiplier);
+        return Math.round(getBaseSwordDamage() * atkMultiplier);
     }
 
-    // --- Upgrade Methods for Skill Shop ---
-    public boolean upgradeMaxHealth(int amount) {
-        if (maxHealth + amount <= 20) {
-            maxHealth += amount;
+    // --- Sword Upgrade Logic ---
+    public boolean canUpgradeSword() {
+        if (swordTier >= 6) return false; // Max tier ("???") reached
+        int cost = SwordData.getUpgradeCost(swordTier, swordSubLevel);
+        return Inventory.getInstance().getGold() >= cost;
+    }
+
+    public boolean upgradeSword() {
+        if (!canUpgradeSword()) return false;
+
+        int cost = SwordData.getUpgradeCost(swordTier, swordSubLevel);
+        Inventory.getInstance().removeGold(cost);
+
+        if (swordSubLevel < 5) {
+            swordSubLevel++;
+        } else {
+            // Reached 5 sub-upgrades -> Tier up to next sword
+            swordTier++;
+            swordSubLevel = 0;
+            System.out.println("NEW SWORD UNLOCKED: " + SwordData.TIERS[swordTier].name);
+        }
+        return true;
+    }
+
+    // --- Skill Point Upgrades ---
+    public int getSkillPoints() { return skillPoints; }
+    public void addSkillPoints(int amount) { skillPoints += amount; }
+
+    public boolean upgradeMaxHealth() {
+        if (skillPoints >= 1 && maxHealth + 1 <= 20) {
+            skillPoints--;
+            maxHealth++;
             currentHealth = maxHealth;
             return true;
         }
         return false;
     }
 
-    public boolean upgradeMaxShield(int amount) {
-        if (maxShield + amount <= 10) {
-            maxShield += amount;
+    public boolean upgradeMaxShield() {
+        if (skillPoints >= 1 && maxShield + 1 <= 10) {
+            skillPoints--;
+            maxShield++;
             currentShield = maxShield;
             return true;
         }
         return false;
     }
 
-    public boolean upgradeMaxMana(int amount) {
-        if (maxMana + amount <= 400) {
-            maxMana += amount;
+    public boolean upgradeMaxMana() {
+        if (skillPoints >= 1 && maxMana + 5 <= 25) {
+            skillPoints--;
+            maxMana += 5;
             currentMana = maxMana;
             return true;
         }
         return false;
     }
 
-    public boolean upgradeAtkMultiplier(float amount) {
-        if (atkMultiplier + amount <= 2.51f) {
-            atkMultiplier = Math.min(2.5f, atkMultiplier + amount);
+    public boolean upgradeAtkMultiplier() {
+        if (skillPoints >= 1 && atkMultiplier < 2.50f) {
+            skillPoints--;
+            atkMultiplier = Math.min(2.5f, atkMultiplier + 0.15f);
             return true;
         }
         return false;
     }
 
-    public void setSwordBaseDamage(int damage) {
-        this.swordBaseDamage = damage;
-    }
-
-    // --- Getters ---
+    // Getters
+    public int getSwordTier() { return swordTier; }
+    public int getSwordSubLevel() { return swordSubLevel; }
     public int getCurrentHealth() { return currentHealth; }
     public int getMaxHealth() { return maxHealth; }
     public int getCurrentShield() { return currentShield; }
@@ -164,6 +181,5 @@ public class PlayerStats {
     public int getCurrentMana() { return (int) currentMana; }
     public int getMaxMana() { return maxMana; }
     public float getAtkMultiplier() { return atkMultiplier; }
-    public int getSwordBaseDamage() { return swordBaseDamage; }
     public boolean isInvulnerable() { return isInvulnerable; }
 }

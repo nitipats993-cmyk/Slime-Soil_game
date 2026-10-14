@@ -29,6 +29,15 @@ public class LightManager {
     }
 
     /**
+     * Clears all registered light sources when switching maps.
+     */
+    public void clearLights() {
+        if (lightSources != null) {
+            lightSources.clear();
+        }
+    }
+
+    /**
      * Programmatically creates a soft, circular radial light glow texture.
      */
     private void generateLightTexture() {

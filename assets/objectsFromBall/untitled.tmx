@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="331">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="9" nextobjectid="333">
  <editorsettings>
   <export target="../../../../../../ballt/Downloads/John.csv" format="csv"/>
  </editorsettings>
@@ -26,9 +26,19 @@
    eJzFVUEKwCAM6/c97rbdfIhv8S1jMEFKqrEqBmQKpUnTTrOI5EOrRpI2kvqycXU8w/udw7+PHQ6EB+RBvEE4sHEIiHcVgrHXvJZXTF33oKad9c7yolqQBz1fkNcaVycHg54O1ueZ+UV5Zvvr1bN7rqyeWbye2Slg/qsV9Y56bd0bq2ZolFfDo6PVp5o3Erl030b1lNo87+8Mypt4+n4+sV7aSWrL
   </data>
  </layer>
- <layer id="7" name="Collision" width="30" height="20">
+ <layer id="7" name="Collision" width="30" height="20" visible="0">
   <data encoding="base64" compression="zlib">
-   eJxjYBg4cJfOGNleeoFRe4e/vXeR2PQEo/YOX3sHKl2NxPw7ai/97R2Ien8gAABJw02z
+   eJxjYBg4cJfOGNleeoFRe4e/vXeR2AMBRu0dfvYOVLoaifl31F762zsQ9f5AAAA8BEo/
   </data>
  </layer>
+ <objectgroup id="8" name="Objects">
+  <object id="332" x="416.333" y="111.667" width="47.3333" height="63.6667">
+   <properties>
+    <property name="isTransition" type="bool" value="true"/>
+    <property name="spawnX" type="float" value="1"/>
+    <property name="spawnY" type="float" value="15"/>
+    <property name="targetMap" value="assets/objects/main.tmx"/>
+   </properties>
+  </object>
+ </objectgroup>
 </map>

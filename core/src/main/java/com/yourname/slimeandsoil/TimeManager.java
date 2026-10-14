@@ -24,6 +24,9 @@ public class TimeManager {
     private final Color dawnColor = new Color(0.7f, 0.6f, 0.8f, 1.0f);       // Dawn (Soft Purple)
     private final Color currentAmbientColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
 
+    // Tracker for DungeonEntries
+    private boolean enteredDungeonToday = false;
+
     private TimeManager() {}
 
     public static TimeManager getInstance() {
@@ -92,8 +95,17 @@ public class TimeManager {
 
     private void startNewDay() {
         currentDay++;
+        enteredDungeonToday = false; // Reset daily dungeon entry limit on new day
         System.out.println("=== Day " + currentDay + " Has Started ===");
         CropManager.getInstance().advanceDay();
+    }
+
+    public boolean hasEnteredDungeonToday() {
+        return enteredDungeonToday;
+    }
+
+    public void setEnteredDungeonToday(boolean value) {
+        this.enteredDungeonToday = value;
     }
 
     public int getCurrentDay() { return currentDay; }

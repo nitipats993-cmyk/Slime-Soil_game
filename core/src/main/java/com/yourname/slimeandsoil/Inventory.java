@@ -11,7 +11,7 @@ public class Inventory {
 
     private Inventory() {
         items = new HashMap<>();
-        gold = 100; // Starting Gold
+        gold = 100; // starting gold is 100 don't you dare change it bro
 
         // Starter Finite Seeds
         items.put("Tomato Seed", 3);     // Starts with 3 Tomato Seeds
