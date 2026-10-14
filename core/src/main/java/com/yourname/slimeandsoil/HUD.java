@@ -46,7 +46,28 @@ public class HUD {
         font.setColor(Color.WHITE);
         font.draw(batch, "Tool: " + player.getCurrentToolName(), 25, 655);
 
-        // 3. Combat Stats Gauges (Top Center)
+        // 3. Wave Status & Skip Timer Display (Top Left below Tool)
+        WaveManager wm = WaveManager.getInstance();
+        if (wm.getCurrentWave() == 0) {
+            font.setColor(Color.ORANGE);
+            font.draw(batch, "Wave: Not Started (Press [N] to Start Wave 1)", 25, 615);
+        } else {
+            int alive = wm.getAliveSlimeCount();
+            String skipStatus;
+            if (alive == 0) {
+                font.setColor(Color.GREEN);
+                skipStatus = "Wave Clear! Press [N] for Next Wave";
+            } else if (wm.getWaveTimer() <= 0) {
+                font.setColor(Color.ORANGE);
+                skipStatus = "Press [N] to Skip to Next Wave";
+            } else {
+                font.setColor(Color.LIGHT_GRAY);
+                skipStatus = String.format("Next Wave Skip in %ds", (int) Math.ceil(wm.getWaveTimer()));
+            }
+            font.draw(batch, String.format("Wave %d  |  Slimes: %d  |  %s", wm.getCurrentWave(), alive, skipStatus), 25, 615);
+        }
+
+        // 4. Combat Stats Gauges (Top Center)
         PlayerStats stats = PlayerStats.getInstance();
         font.setColor(Color.RED);
         font.draw(batch, "HP: " + stats.getCurrentHealth() + "/" + stats.getMaxHealth(), 380, 695);
@@ -57,7 +78,7 @@ public class HUD {
         font.setColor(Color.BLUE);
         font.draw(batch, "Mana: " + stats.getCurrentMana() + "/" + stats.getMaxMana(), 680, 695);
 
-        // 4. Gold & Crop Inventory Trackers (Top Right)
+        // 5. Gold & Crop Inventory Trackers (Top Right)
         int gold = Inventory.getInstance().getGold();
         int tomatoes = Inventory.getInstance().getItemCount("Tomato");
         int gemFlowers = Inventory.getInstance().getItemCount("GemFlower");
@@ -69,13 +90,13 @@ public class HUD {
         font.setColor(Color.GREEN);
         font.draw(batch, String.format("Tomato: %d | Gem: %d | Skill: %d", tomatoes, gemFlowers, skillFlowers), 830, 655);
 
-        // 5. Hotbar Controls Guide
+        // 6. Hotbar Controls Guide
         font.getData().setScale(1.2f);
         font.setColor(Color.LIGHT_GRAY);
-        font.draw(batch, "[1] Hoe  [2] Tomato Seed  [3] Gem Seed  [4] Skill Seed  [5] Can  |  [Space] Action  [Shift] Dodge  [N] Sleep", 25, 35);
+        font.draw(batch, "[1] Hoe  [2] Tomato Seed  [3] Gem Seed  [4] Skill Seed  [5] Can  |  [Space] Action  [Shift] Dodge  [N] Next Wave  [M] Sleep", 25, 35);
         font.getData().setScale(1.8f);
 
-        // 6. Render Warning Dialog Overlay
+        // 7. Render Warning Dialog Overlay
         if (warningDialog.isActive()) {
             warningDialog.render(batch, font);
         }

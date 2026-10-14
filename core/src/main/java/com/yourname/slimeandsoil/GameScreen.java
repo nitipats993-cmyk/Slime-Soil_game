@@ -30,9 +30,17 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void show() {
-        game.assetManager.load("assets/objects/main.tmx", TiledMap.class);
+        // Load untitled.tmx (falls back to objectsFromBall/untitled.tmx if placed in that subfolder)
+        String mapPath = "assets/objects/untitled.tmx";
+        if (Gdx.files.internal("assets/objects/objectsFromBall/untitled.tmx").exists()) {
+            mapPath = "assets/objects/objectsFromBall/untitled.tmx";
+        } else if (Gdx.files.internal("assets/objectsFromBall/untitled.tmx").exists()) {
+            mapPath = "assets/objectsFromBall/untitled.tmx";
+        }
+
+        game.assetManager.load(mapPath, TiledMap.class);
         game.assetManager.finishLoading();
-        currentMap = game.assetManager.get("assets/objects/main.tmx", TiledMap.class);
+        currentMap = game.assetManager.get(mapPath, TiledMap.class);
         mapRenderer = new OrthogonalTiledMapRenderer(currentMap, UNIT_SCALE, game.batch);
 
         int mapWidthInTiles = currentMap.getProperties().get("width", Integer.class);
@@ -87,8 +95,9 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
-        // 1. Update Logic & Time Cycle
+        // 1. Update Logic, Slime Waves, & Time Cycle
         player.update(delta, currentMap, hud);
+        WaveManager.getInstance().update(delta, player, currentMap);
         TimeManager.getInstance().update(delta);
 
         // 2. Camera Placement
@@ -118,20 +127,25 @@ public class GameScreen extends ScreenAdapter {
         CropManager.getInstance().render(game.batch);
         game.batch.end();
 
-        // 6. Render Player
+        // 6. Render Slimes
+        game.batch.begin();
+        WaveManager.getInstance().render(game.batch);
+        game.batch.end();
+
+        // 7. Render Player
         game.batch.begin();
         player.render(game.batch);
         game.batch.end();
 
-        // 7. Render Lamp & Window Light Glows (Additive Pass)
+        // 8. Render Lamp & Window Light Glows (Additive Pass)
         game.batch.begin();
         LightManager.getInstance().render(game.batch);
         game.batch.end();
 
-        // 8. Reset Ambient Light Tint
+        // 9. Reset Ambient Light Tint
         TimeManager.getInstance().resetLightTint(game.batch);
 
-        // 9. Render HUD Overlay (always rendered un-tinted at full brightness)
+        // 10. Render HUD Overlay (always rendered un-tinted at full brightness)
         hud.render(game.batch, player);
     }
 
@@ -148,6 +162,7 @@ public class GameScreen extends ScreenAdapter {
         if (mapRenderer != null) mapRenderer.dispose();
         if (player != null) player.dispose();
         if (hud != null) hud.dispose();
+        WaveManager.getInstance().dispose();
         CropFactory.dispose();
         LightManager.getInstance().dispose();
     }
