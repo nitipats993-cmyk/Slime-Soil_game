@@ -198,9 +198,9 @@ public class PlayerStats {
     }
 
     public boolean upgradeMaxMana() {
-        if (skillPoints >= 1 && maxMana + 1 <= 25) {
+        if (skillPoints >= 1 && maxMana + 5 <= 25) {
             skillPoints--;
-            maxMana += 1;
+            maxMana += 5;
             currentMana = maxMana;
             return true;
         }

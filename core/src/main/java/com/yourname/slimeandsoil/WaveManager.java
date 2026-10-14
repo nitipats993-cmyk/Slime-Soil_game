@@ -17,6 +17,7 @@ public class WaveManager {
     private final List<Slime> slimes;
     private int currentWave = 0;
     private float waveTimer = 0;
+    private int lastRewardedWave = 0; // Tracks the last wave rewarded to prevent duplicate payouts
 
     private WaveManager() {
         slimes = new ArrayList<>();
@@ -66,6 +67,16 @@ public class WaveManager {
                 slime.dispose();
                 slimes.remove(i);
             }
+        }
+
+        // Grant +1 Skill Point every 3 waves cleared
+        if (currentWave > 0 && slimes.isEmpty() && lastRewardedWave != currentWave) {
+            if (currentWave % 3 == 0) {
+                PlayerStats.getInstance().addSkillPoints(1);
+                PlayerStats.getInstance().showPickupText("+1 Skill Pt (3 Waves Cleared!)");
+                System.out.println("=== Wave " + currentWave + " Cleared! Rewarded +1 Skill Point! ===");
+            }
+            lastRewardedWave = currentWave;
         }
     }
 

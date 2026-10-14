@@ -74,6 +74,12 @@ public class CropManager {
             // Add 1 harvested item to inventory
             Inventory.getInstance().addItem(cropName, 1);
 
+            // Grant Skill Point if harvesting a SkillFlower
+            if (cropName.equals("SkillFlower")) {
+                PlayerStats.getInstance().addSkillPoints(1);
+                PlayerStats.getInstance().showPickupText("+1 Skill Point!");
+            }
+
             // Regrowable crops (like Tomato) reset to Stage 1; others are removed
             if (crop.isRegrowable()) {
                 crop.resetToStageOne();

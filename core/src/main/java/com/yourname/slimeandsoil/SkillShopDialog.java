@@ -53,7 +53,7 @@ public class SkillShopDialog {
         font.setColor(Color.WHITE);
         font.draw(batch, "[1] +1 Max HP (" + stats.getMaxHealth() + "/20) - Cost: 1 Skill Pt", 380, 420);
         font.draw(batch, "[2] +1 Max Shield (" + stats.getMaxShield() + "/10) - Cost: 1 Skill Pt", 380, 380);
-        font.draw(batch, "[3] +1 Max Mana (" + stats.getMaxMana() + "/25) - Cost: 1 Skill Pt", 380, 340);
+        font.draw(batch, "[3] +5 Max Mana (" + stats.getMaxMana() + "/25) - Cost: 1 Skill Pt", 380, 340);
         font.draw(batch, String.format("[4] +0.15x ATK Multiplier (%.2fx/2.50x) - Cost: 1 Skill Pt", stats.getAtkMultiplier()), 380, 300);
 
         font.setColor(Color.LIGHT_GRAY);
