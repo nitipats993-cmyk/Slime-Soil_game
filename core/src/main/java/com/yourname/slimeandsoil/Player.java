@@ -163,14 +163,16 @@ public class Player {
 
         // --- Press R to Fast-Forward Daytime to 18:00 (Start of Farm Defense) ---
         if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
-            if (hud != null && TimeManager.getInstance().getCurrentHour() < 18.0f) {
+            if (TimeManager.getInstance().isInArena()) {
+                PlayerStats.getInstance().showPickupText("Cannot skip to 6:00 PM in the Arena!");
+            } else if (hud != null && TimeManager.getInstance().getCurrentHour() < 18.0f && TimeManager.getInstance().getCurrentHour() >= 6.0f) {
                 hud.getWarningDialog().showDialog("Skip to 18:00 PM (Start of Farm Defense)?", new Runnable() {
                     @Override
                     public void run() {
                         TimeManager.getInstance().skipToEvening();
                     }
                 });
-            } else if (TimeManager.getInstance().getCurrentHour() >= 18.0f) {
+            } else {
                 PlayerStats.getInstance().showPickupText("Nighttime! Go to house door to sleep.");
             }
             return;

@@ -24,9 +24,6 @@ public class CropManager {
         return instance;
     }
 
-    /**
-     * Attempts to plant a crop on tilled soil.
-     */
     public boolean plantCrop(int x, int y, String cropType, TiledMap map) {
         GridPoint2 pos = new GridPoint2(x, y);
 
@@ -47,9 +44,6 @@ public class CropManager {
         return true;
     }
 
-    /**
-     * Waters a crop at specific grid coordinates.
-     */
     public boolean waterCrop(int x, int y) {
         GridPoint2 pos = new GridPoint2(x, y);
         Crop crop = activeCrops.get(pos);
@@ -61,26 +55,14 @@ public class CropManager {
         return false;
     }
 
-    /**
-     * harvesting TIME
-     */
     public boolean harvestCrop(int x, int y) {
         GridPoint2 key = new GridPoint2(x, y);
         Crop crop = activeCrops.get(key);
 
         if (crop != null && crop.isFullyGrown()) {
             String cropName = crop.getName();
-
-            // Add 1 harvested item to inventory
             Inventory.getInstance().addItem(cropName, 1);
 
-            // Grant Skill Point if harvesting a SkillFlower
-            if (cropName.equals("SkillFlower")) {
-                PlayerStats.getInstance().addSkillPoints(1);
-                PlayerStats.getInstance().showPickupText("+1 Skill Point!");
-            }
-
-            // Regrowable crops (like Tomato) reset to Stage 1; others are removed
             if (crop.isRegrowable()) {
                 crop.resetToStageOne();
             } else {
@@ -92,17 +74,20 @@ public class CropManager {
     }
 
     /**
-     * Advance all watered crops to their next growth stage.
+     * Deletes all planted crops on the farm (triggered if you stay >1 hour in the Arena
+     * or fail to kill all Farm Defense slimes before 6:00 AM).
      */
+    public void clearAllCrops() {
+        activeCrops.clear();
+        System.out.println("WARNING: All crops on your farm have been destroyed!");
+    }
+
     public void advanceDay() {
         for (Crop crop : activeCrops.values()) {
             crop.grow();
         }
     }
 
-    /**
-     * Renders all active crops.
-     */
     public void render(SpriteBatch batch) {
         for (Crop crop : activeCrops.values()) {
             crop.render(batch);

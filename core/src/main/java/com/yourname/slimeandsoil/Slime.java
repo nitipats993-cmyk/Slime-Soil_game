@@ -175,7 +175,7 @@ public class Slime {
         // 4. Deal contact damage when touching the Player
         if (Math.abs(player.getX() - x) < (float) 0.8 && Math.abs(player.getY() - y) < (float) 0.8) {
             if (stats.performAttack()) {
-                PlayerStats.getInstance().takeDamage(stats.getBaseDamage());
+                PlayerStats.getInstance().takeDamage(stats.getDamage());
             }
         }
     }

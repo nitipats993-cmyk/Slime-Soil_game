@@ -1,5 +1,5 @@
 {
-    "activeFile": "",
+    "activeFile": "C:/Users/TuffShit/IdeaProjects/Slime-Soil_game/assets/objects/main.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -37,17 +37,73 @@
         "C:/Users/Patch/Desktop/261200 OOP/SlimeAndSoil/assets/objects/tileset.tsx": {
             "scaleInDock": 1
         },
+        "C:/Users/TuffShit/IdeaProjects/Slime-Soil_game/assets/objects/Outdoor_Decor_Free.tsx": {
+            "scaleInDock": 1
+        },
+        "C:/Users/TuffShit/IdeaProjects/Slime-Soil_game/assets/objects/Player.tsx": {
+            "scaleInDock": 1
+        },
+        "C:/Users/TuffShit/IdeaProjects/Slime-Soil_game/assets/objects/combined.tsx": {
+            "scaleInDock": 1
+        },
+        "C:/Users/TuffShit/IdeaProjects/Slime-Soil_game/assets/objects/farmland.tsx": {
+            "scaleInDock": 1
+        },
+        "C:/Users/TuffShit/IdeaProjects/Slime-Soil_game/assets/objects/fenceobjects.tsx": {
+            "scaleInDock": 1
+        },
+        "C:/Users/TuffShit/IdeaProjects/Slime-Soil_game/assets/objects/house.tsx": {
+            "scaleInDock": 1
+        },
+        "C:/Users/TuffShit/IdeaProjects/Slime-Soil_game/assets/objects/lime.tsx": {
+            "scaleInDock": 1
+        },
+        "C:/Users/TuffShit/IdeaProjects/Slime-Soil_game/assets/objects/main.tmx": {
+            "scale": 1.7654166666666666,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 240.16993155534578,
+                "y": 240.16993155534576
+            }
+        },
+        "C:/Users/TuffShit/IdeaProjects/Slime-Soil_game/assets/objects/main.tmx#plowed": {
+            "scaleInDock": 1
+        },
+        "C:/Users/TuffShit/IdeaProjects/Slime-Soil_game/assets/objects/objects.tsx": {
+            "scaleInDock": 1
+        },
+        "C:/Users/TuffShit/IdeaProjects/Slime-Soil_game/assets/objects/pathtile.tsx": {
+            "scaleInDock": 1
+        },
+        "C:/Users/TuffShit/IdeaProjects/Slime-Soil_game/assets/objects/red2.0.tsx": {
+            "scaleInDock": 1
+        },
+        "C:/Users/TuffShit/IdeaProjects/Slime-Soil_game/assets/objects/smallcrate.tsx": {
+            "scaleInDock": 1
+        },
+        "C:/Users/TuffShit/IdeaProjects/Slime-Soil_game/assets/objects/tileset.tsx": {
+            "scaleInDock": 1
+        },
+        "C:/Users/TuffShit/IdeaProjects/Slime-Soil_game/assets/objects/trainer.tsx": {
+            "scaleInDock": 1
+        },
+        "C:/Users/TuffShit/IdeaProjects/Slime-Soil_game/assets/objects/tree.tsx": {
+            "scaleInDock": 1
+        },
         "Object1.tsx": {
             "dynamicWrapping": true,
-            "scaleInDock": 1
+            "scaleInDock": 1,
+            "scaleInEditor": 1
         },
         "Outdoor_Decor_Free.tsx": {
             "dynamicWrapping": false,
-            "scaleInDock": 1
+            "scaleInDock": 1,
+            "scaleInEditor": 4
         },
         "Tiled1.tsx": {
             "dynamicWrapping": false,
-            "scaleInDock": 1
+            "scaleInDock": 1,
+            "scaleInEditor": 1
         },
         "animals.tsx": {
             "dynamicWrapping": false,
@@ -55,6 +111,7 @@
             "scaleInEditor": 1
         },
         "monster.tsx": {
+            "dynamicWrapping": true,
             "scaleInDock": 1,
             "scaleInEditor": 1
         },
@@ -64,12 +121,18 @@
             "scaleInEditor": 1
         },
         "untitled.tmx": {
-            "scale": 2.1751041666666664,
-            "selectedLayer": 0,
+            "scale": 1.5,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 239.98850629759116,
-                "y": 160.2222115799052
+                "x": 240.33333333333331,
+                "y": 159.66666666666663
             }
+        },
+        "untitled.tmx#red2.0": {
+            "scaleInDock": 1
+        },
+        "untitled.tmx#tree": {
+            "scaleInDock": 1
         }
     },
     "last.exportedFilePath": "C:/Users/ballt/Downloads",
@@ -80,12 +143,18 @@
     "map.tileHeight": 16,
     "map.tileWidth": 16,
     "openFiles": [
+        "untitled.tmx",
+        "C:/Users/TuffShit/IdeaProjects/Slime-Soil_game/assets/objects/main.tmx"
     ],
     "project": "Supermandih.tiled-project",
     "recentFiles": [
         "untitled.tmx",
-        "C:/Users/Patch/Desktop/261200 OOP/SlimeAndSoil/assets/objects/main.tmx",
+        "C:/Users/TuffShit/IdeaProjects/Slime-Soil_game/assets/objects/main.tmx",
+        "Tiled1.tsx",
+        "Outdoor_Decor_Free.tsx",
+        "Object1.tsx",
         "monster.tsx",
+        "C:/Users/Patch/Desktop/261200 OOP/SlimeAndSoil/assets/objects/main.tmx",
         "animals.tsx",
         "monsters.tsx"
     ],

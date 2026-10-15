@@ -17,25 +17,24 @@ public class SlimeStats {
     private float speed;
 
     // --- Attack Damage & Cooldown Stat ---
-    private int baseDamage = 1;
+    private int damage;
     private float attackCooldownTimer = 0.0f;
     private static final float ATTACK_COOLDOWN = 1.0f; // 1 second cooldown between hits
 
     public SlimeStats(int currentWave) {
         // Scale health range every 3 waves (Waves 1-3: 3-5 HP, Waves 4-6: 6-8 HP, Waves 7-9: 9-11 HP...)
         int tier = (currentWave - 1) / 3;
-        int minHealth = 3 + (tier * 3);
-        int maxHealthRange = 5 + (tier * 3);
+        int minHealth = 5 + (tier * 3);
+        int maxHealthRange = 7 + (tier * 3);
 
         this.maxHealth = MathUtils.random(minHealth, maxHealthRange);
         this.currentHealth = this.maxHealth;
 
-        // Increase speed by a tiny amount (+0.05) each wave
+        this.damage = 1 + tier;
         this.speed = 2.0f + ((currentWave - 1) * 0.05f);
     }
 
     public void update(float delta) {
-        // 1. Handle Spawning Invincibility Timer
         if (spawnTimer > 0) {
             spawnTimer -= delta;
             if (spawnTimer <= 0) {
@@ -43,7 +42,6 @@ public class SlimeStats {
             }
         }
 
-        // 2. Handle Attack Cooldown
         if (attackCooldownTimer > 0) {
             attackCooldownTimer -= delta;
         }
@@ -116,7 +114,7 @@ public class SlimeStats {
     public int getCurrentHealth() { return currentHealth; }
     public int getMaxHealth() { return maxHealth; }
     public float getSpeed() { return speed; }
-    public int getBaseDamage() { return baseDamage; }
+    public int getDamage() { return damage; }
     public boolean isDead() { return isDead; }
     public boolean isSpawning() { return isSpawning; }
 }

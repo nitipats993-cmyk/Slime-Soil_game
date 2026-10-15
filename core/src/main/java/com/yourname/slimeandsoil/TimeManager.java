@@ -1,7 +1,5 @@
 package com.yourname.slimeandsoil;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -10,11 +8,11 @@ public class TimeManager {
     private static TimeManager instance;
 
     // Time representation: 0.0 to 24.0 hours
-    private float currentHour = 6.0f; // Day starts at 6:00 AM (6.0f is default, if you wanna test for night try 22.0f)
+    private float currentHour = 6.0f; // Day starts at 6:00 AM
     private int currentDay = 1;
 
     // Real-time duration of 1 full in-game day (300 seconds = 5 minutes)
-    private static final float DAY_DURATION_SECONDS = 300.0f; // default is 300.0f
+    private static final float DAY_DURATION_SECONDS = 300.0f;
     private static final float HOURS_PER_SECOND = 24.0f / DAY_DURATION_SECONDS;
 
     // Color tints for Day/Night cycle
@@ -28,6 +26,10 @@ public class TimeManager {
     private boolean enteredDungeonToday = false;
     private boolean farmWaveTriggeredToday = false;
 
+    // Arena State & 7:00 PM (1 Hour After 6:00 PM) Crop Penalty Tracker
+    private boolean inArena = false;
+    private boolean arenaCropPenaltyTriggered = false;
+
     private TimeManager() {}
 
     public static TimeManager getInstance() {
@@ -38,38 +40,64 @@ public class TimeManager {
     }
 
     public void update(float delta) {
+        float previousHour = currentHour;
         currentHour += delta * HOURS_PER_SECOND;
 
-        // Reset clock at midnight
+        // 1. If still inside the Arena at 7:00 PM (19.0f, 1 hour after 6:00 PM), delete all farm crops
+        if (inArena && (currentHour >= 19.0f || currentHour < 6.0f) && !arenaCropPenaltyTriggered) {
+            arenaCropPenaltyTriggered = true;
+            farmWaveTriggeredToday = true; // Farm was overrun while player was away
+            CropManager.getInstance().clearAllCrops();
+            PlayerStats.getInstance().showPickupText("7:00 PM! Missed Farm Defense - Crops Destroyed!");
+            System.out.println("=== 7:00 PM (1 hr after 6 PM) while still in Arena! All farm crops deleted! ===");
+        }
+
+        // 2. Wrap clock at midnight (24:00 -> 0:00)
         if (currentHour >= 24.0f) {
             currentHour -= 24.0f;
+        }
+
+        // 3. When 6:00 AM arrives, check if Farm Defense slimes are still alive
+        if (previousHour < 6.0f && currentHour >= 6.0f) {
+            if (WaveManager.getInstance().getAliveSlimeCount() > 0) {
+                CropManager.getInstance().clearAllCrops();
+                WaveManager.getInstance().dispose();
+                PlayerStats.getInstance().showPickupText("6:00 AM! Slimes destroyed your crops!");
+                System.out.println("=== 6:00 AM arrived with slimes still alive! All crops deleted! ===");
+            }
             startNewDay();
         }
 
         updateAmbientLighting();
     }
 
+    public void startArenaTimer() {
+        this.inArena = true;
+    }
+
+    public void stopArenaTimer() {
+        this.inArena = false;
+    }
+
+    public boolean isInArena() {
+        return inArena;
+    }
+
     private void updateAmbientLighting() {
         if (currentHour >= 6.0f && currentHour < 17.0f) {
-            // Daylight (6:00 AM - 5:00 PM)
             currentAmbientColor.set(dayColor);
         } else if (currentHour >= 17.0f && currentHour < 19.0f) {
-            // Sunset: Day -> Sunset (5:00 PM - 7:00 PM)
             float alpha = (currentHour - 17.0f) / 2.0f;
             currentAmbientColor.set(dayColor).lerp(sunsetColor, alpha);
         } else if (currentHour >= 19.0f && currentHour < 21.0f) {
-            // Dusk: Sunset -> Night (7:00 PM - 9:00 PM)
             float alpha = (currentHour - 19.0f) / 2.0f;
             currentAmbientColor.set(sunsetColor).lerp(nightColor, alpha);
         } else if (currentHour >= 21.0f || currentHour < 4.0f) {
-            // Nighttime (9:00 PM - 4:00 AM)
             currentAmbientColor.set(nightColor);
         } else if (currentHour >= 4.0f && currentHour < 5.0f) {
-            // Night -> Dawn (4:00 AM - 5:00 AM)
             float alpha = (currentHour - 4.0f) / 1.0f;
             currentAmbientColor.set(nightColor).lerp(dawnColor, alpha);
         } else {
-            // Sunrise: Dawn -> Day (5:00 AM - 6:00 AM)
             float alpha = (currentHour - 5.0f) / 1.0f;
             currentAmbientColor.set(dawnColor).lerp(dayColor, alpha);
         }
@@ -87,7 +115,9 @@ public class TimeManager {
      * Fast forwards daytime directly to 18:00 (6:00 PM Evening) for Farm Defense
      */
     public void skipToEvening() {
-        if (currentHour < 18.0f) {
+        if (inArena) return; // Cannot skip to 6:00 PM while inside the Arena
+
+        if (currentHour < 18.0f && currentHour >= 6.0f) {
             System.out.println("Resting... Fast-forwarding to 18:00 PM (Start of Farm Defense).");
             currentHour = 18.0f;
         }
@@ -105,27 +135,18 @@ public class TimeManager {
 
     private void startNewDay() {
         currentDay++;
-        enteredDungeonToday = false;     // Reset daily dungeon entry limit
-        farmWaveTriggeredToday = false;  // Reset evening farm wave trigger for the new day
+        enteredDungeonToday = false;        // Reset daily dungeon entry limit
+        farmWaveTriggeredToday = false;     // Reset evening farm wave trigger for the new day
+        arenaCropPenaltyTriggered = false;  // Reset 7:00 PM arena crop penalty tracker
         System.out.println("=== Day " + currentDay + " Has Started ===");
         CropManager.getInstance().advanceDay();
     }
 
-    public boolean hasEnteredDungeonToday() {
-        return enteredDungeonToday;
-    }
+    public boolean hasEnteredDungeonToday() { return enteredDungeonToday; }
+    public void setEnteredDungeonToday(boolean value) { this.enteredDungeonToday = value; }
 
-    public void setEnteredDungeonToday(boolean value) {
-        this.enteredDungeonToday = value;
-    }
-
-    public boolean isFarmWaveTriggeredToday() {
-        return farmWaveTriggeredToday;
-    }
-
-    public void setFarmWaveTriggeredToday(boolean value) {
-        this.farmWaveTriggeredToday = value;
-    }
+    public boolean isFarmWaveTriggeredToday() { return farmWaveTriggeredToday; }
+    public void setFarmWaveTriggeredToday(boolean value) { this.farmWaveTriggeredToday = value; }
 
     public int getCurrentDay() { return currentDay; }
     public float getCurrentHour() { return currentHour; }

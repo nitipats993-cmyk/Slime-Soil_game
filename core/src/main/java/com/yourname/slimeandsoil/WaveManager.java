@@ -17,7 +17,7 @@ public class WaveManager {
     private final List<Slime> slimes;
     private int currentWave = 0;
     private float waveTimer = 0;
-    private int lastRewardedWave = 0; // Tracks the last wave rewarded to prevent duplicate payouts
+    private int lastRewardedWave = 0;
 
     private WaveManager() {
         slimes = new ArrayList<>();
@@ -28,6 +28,20 @@ public class WaveManager {
             instance = new WaveManager();
         }
         return instance;
+    }
+
+    /**
+     * Clears any leftover slimes when entering the Arena.
+     */
+    public void startArenaRun() {
+        dispose();
+    }
+
+    /**
+     * Player can only leave the Arena when all slimes from all spawned waves are defeated.
+     */
+    public boolean hasClearedAllArenaWaves() {
+        return getAliveSlimeCount() == 0;
     }
 
     public void update(float delta, Player player, TiledMap currentMap, String currentMapPath) {
@@ -43,7 +57,7 @@ public class WaveManager {
             }
         }
 
-        // 2. FOREST DUNGEON MANUAL WAVE CONTROLS (Press [M] inside untitled.tmx)
+        // 2. FOREST DUNGEON MANUAL WAVE CONTROLS (Press [M] inside untitled.tmx - No wave limit!)
         if (currentMapPath.contains("untitled.tmx")) {
             if (waveTimer > 0) {
                 waveTimer -= delta;
@@ -87,7 +101,6 @@ public class WaveManager {
         int tier = (currentWave - 1) / 3;
         int waveInBetween = (currentWave - 1) % 3;
 
-        // Increase enemies spawned for each wave in between
         int spawnCount = 3 + (tier * 2) + (waveInBetween * 2);
 
         int mapWidth = currentMap.getProperties().get("width", Integer.class);
@@ -98,7 +111,6 @@ public class WaveManager {
             int randomX = MathUtils.random(2, mapWidth - 3);
             int randomY = MathUtils.random(2, mapHeight - 3);
 
-            // Re-roll if the random tile is on a red Collision tile
             if (collisionLayer != null) {
                 int tries = 0;
                 while (collisionLayer.getCell(randomX, randomY) != null && tries < 30) {
@@ -130,17 +142,9 @@ public class WaveManager {
         return count;
     }
 
-    public List<Slime> getSlimes() {
-        return slimes;
-    }
-
-    public int getCurrentWave() {
-        return currentWave;
-    }
-
-    public float getWaveTimer() {
-        return waveTimer;
-    }
+    public List<Slime> getSlimes() { return slimes; }
+    public int getCurrentWave() { return currentWave; }
+    public float getWaveTimer() { return waveTimer; }
 
     public void dispose() {
         for (Slime slime : slimes) {
