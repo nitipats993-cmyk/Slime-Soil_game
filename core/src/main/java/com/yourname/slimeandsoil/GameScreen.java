@@ -23,15 +23,14 @@ public class GameScreen extends ScreenAdapter {
 
     private static final float UNIT_SCALE = (float) 1 / 16;
 
-    // --- Player & UI ---
     private Player player;
     private HUD hud;
 
-    // --- Camera Boundary Variables ---
+    //cam vars
     private float mapWorldWidth;
     private float mapWorldHeight;
 
-    // --- Map Transition Triggers & House Bed Bounds ---
+    //interaction box
     private final List<MapTransition> transitions = new ArrayList<>();
     private Rectangle bedArea = null;
 
@@ -52,7 +51,6 @@ public class GameScreen extends ScreenAdapter {
         player = new Player();
         hud = new HUD();
 
-        // Load starting map
         loadMap("assets/objects/main.tmx", 5.0f, 5.0f);
     }
 
@@ -79,11 +77,11 @@ public class GameScreen extends ScreenAdapter {
         bedArea = null;
         LightManager.getInstance().clearLights();
 
-        // Scan Tiled map layers
+        // Tiled stuff
         for (MapLayer layer : currentMap.getLayers()) {
             for (MapObject object : layer.getObjects()) {
 
-                // Scan for Map Transitions
+                // check trans box
                 if (object.getProperties().containsKey("isTransition") &&
                     Boolean.TRUE.equals(object.getProperties().get("isTransition", Boolean.class))) {
 
@@ -99,7 +97,7 @@ public class GameScreen extends ScreenAdapter {
                     transitions.add(new MapTransition(x, y, width, height, targetMap, targetSpawnX, targetSpawnY));
                 }
 
-                // Scan for Bed / House Entrance (isBed = true in Tiled)
+                //go to sleep at night for next day
                 if (object.getProperties().containsKey("isBed") &&
                     Boolean.TRUE.equals(object.getProperties().get("isBed", Boolean.class))) {
 
@@ -111,7 +109,7 @@ public class GameScreen extends ScreenAdapter {
                     bedArea = new Rectangle(x, y, width, height);
                 }
 
-                // Scan for Light Sources
+                //pretty ahh lights on lmaps and house
                 if (object.getProperties().containsKey("isLight") &&
                     Boolean.TRUE.equals(object.getProperties().get("isLight", Boolean.class))) {
 
@@ -120,7 +118,7 @@ public class GameScreen extends ScreenAdapter {
                     LightManager.getInstance().addLightSource(x, y);
                 }
 
-                // Scan for Shipping Bin
+                // the person you sell cocaine to
                 if (object.getProperties().containsKey("isShippingBin") &&
                     Boolean.TRUE.equals(object.getProperties().get("isShippingBin", Boolean.class))) {
 
@@ -132,7 +130,7 @@ public class GameScreen extends ScreenAdapter {
                     ShippingBin.getInstance().setBinArea(x, y, width, height);
                 }
 
-                // Scan for Skill Shop
+                // stats shop
                 if (object.getProperties().containsKey("isSkillShop") &&
                     Boolean.TRUE.equals(object.getProperties().get("isSkillShop", Boolean.class))) {
 
@@ -144,7 +142,7 @@ public class GameScreen extends ScreenAdapter {
                     SkillShop.getInstance().setShopArea(x, y, width, height);
                 }
 
-                // Scan for Sword Shop
+                // swords shop
                 if (object.getProperties().containsKey("isSwordShop") &&
                     Boolean.TRUE.equals(object.getProperties().get("isSwordShop", Boolean.class))) {
 
@@ -158,12 +156,11 @@ public class GameScreen extends ScreenAdapter {
             }
         }
 
-        // Default bed location in main.tmx if no object property is set in Tiled
         if (bedArea == null && currentMapPath.contains("main.tmx")) {
             bedArea = new Rectangle(20.0f, 18.0f, 3.0f, 3.0f); // In front of house door
         }
 
-        // Reposition player cleanly
+
         if (player != null) {
             player.setPosition(spawnX, spawnY);
         }
@@ -214,7 +211,6 @@ public class GameScreen extends ScreenAdapter {
             game.batch.end();
         }
 
-        // Render Slimes on both main farm and forest dungeon
         game.batch.begin();
         WaveManager.getInstance().render(game.batch);
         game.batch.end();

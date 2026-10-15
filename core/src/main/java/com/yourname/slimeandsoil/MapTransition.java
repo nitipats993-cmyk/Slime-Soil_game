@@ -18,7 +18,6 @@ public class MapTransition {
     public boolean triggers(float playerFeetX, float playerFeetY) {
         return bounds.contains(playerFeetX, playerFeetY);
     }
-
     public String getTargetMap() { return targetMap; }
     public float getSpawnX() { return spawnX; }
     public float getSpawnY() { return spawnY; }

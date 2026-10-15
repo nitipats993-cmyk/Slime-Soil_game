@@ -10,34 +10,22 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.MathUtils;
 
 public class Slime {
-    // --- Slime Variables ---
     private Texture slimeTexture;
     private Animation<TextureRegion> walkAnimation;
-
-    // --- Idle Animation Variables ---
     private Animation<TextureRegion> idleAnimation;
-
-    // --- Death Animation Variables ---
     private Animation<TextureRegion> deathAnimation;
-
-    // --- Spawn & Warning Box Animation Variables ---
     private Texture warningTexture;
     private Animation<TextureRegion> warningAnimation;
     private Animation<TextureRegion> spawnAnimation;
 
     private float stateTime = 0;
-
     private float x = 5;
     private float y = 5;
     private float speed = 2;
     private boolean isFacingRight = false;
     private boolean isMoving = false;
-
-    // Slime size set to 2.0 for precise tile alignment
     private float width = (float) 2.0;
     private float height = (float) 2.0;
-
-    // --- Slime Stats & Color Reskin ---
     private SlimeStats stats;
     private Color slimeColor;
 
@@ -47,7 +35,7 @@ public class Slime {
         this.stats = new SlimeStats(currentWave);
         this.speed = stats.getSpeed();
 
-        // Randomize slime color reskin
+        //skin color randomizer
         this.slimeColor = new Color(
             MathUtils.random((float) 0.4, (float) 1.0),
             MathUtils.random((float) 0.4, (float) 1.0),
@@ -55,24 +43,22 @@ public class Slime {
             (float) 1.0
         );
 
-        // --- Load Warning Box Animation (2 frames) ---
+
         warningTexture = new Texture(Gdx.files.internal("assets/objects/Enemies/warning-box.png"));
 
         int warnFrameWidth = warningTexture.getWidth() / 2;
         int warnFrameHeight = warningTexture.getHeight();
-
         TextureRegion warn1 = new TextureRegion(warningTexture, 0, 0, warnFrameWidth, warnFrameHeight);
         TextureRegion warn2 = new TextureRegion(warningTexture, warnFrameWidth, 0, warnFrameWidth, warnFrameHeight);
 
         warningAnimation = new Animation<>((float) 0.15, warn1, warn2);
 
-        // --- Load Slime Sprite Sheet (8 columns x 4 rows) ---
+
         slimeTexture = new Texture(Gdx.files.internal("assets/objects/Enemies/Slime_Green.png"));
 
         int frameWidth = slimeTexture.getWidth() / 8;
         int frameHeight = slimeTexture.getHeight() / 4;
 
-        // Slicing Row 1 (Y = 0): Idle Animation (4 frames)
         TextureRegion idle1 = new TextureRegion(slimeTexture, 0, 0, frameWidth, frameHeight);
         TextureRegion idle2 = new TextureRegion(slimeTexture, frameWidth, 0, frameWidth, frameHeight);
         TextureRegion idle3 = new TextureRegion(slimeTexture, frameWidth * 2, 0, frameWidth, frameHeight);
@@ -80,7 +66,8 @@ public class Slime {
 
         idleAnimation = new Animation<>((float) 0.2, idle1, idle2, idle3, idle4);
 
-        // Slicing Row 2 (Y = frameHeight): Walk / Jump Animation (8 frames)
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
         TextureRegion walk1 = new TextureRegion(slimeTexture, 0, frameHeight, frameWidth, frameHeight);
         TextureRegion walk2 = new TextureRegion(slimeTexture, frameWidth, frameHeight, frameWidth, frameHeight);
         TextureRegion walk3 = new TextureRegion(slimeTexture, frameWidth * 2, frameHeight, frameWidth, frameHeight);
@@ -92,7 +79,8 @@ public class Slime {
 
         walkAnimation = new Animation<>((float) 0.12, walk1, walk2, walk3, walk4, walk5, walk6, walk7, walk8);
 
-        // Slicing Row 3 (Y = frameHeight * 2): Death Animation (8 frames)
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////
+
         TextureRegion death1 = new TextureRegion(slimeTexture, 0, frameHeight * 2, frameWidth, frameHeight);
         TextureRegion death2 = new TextureRegion(slimeTexture, frameWidth, frameHeight * 2, frameWidth, frameHeight);
         TextureRegion death3 = new TextureRegion(slimeTexture, frameWidth * 2, frameHeight * 2, frameWidth, frameHeight);
@@ -104,7 +92,8 @@ public class Slime {
 
         deathAnimation = new Animation<>((float) 0.08, death1, death2, death3, death4, death5, death6, death7, death8);
 
-        // Slicing Row 4 (Y = frameHeight * 3): Spawn Animation (3 frames, 0.2s per frame = 0.6s total)
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
         TextureRegion spawn1 = new TextureRegion(slimeTexture, 0, frameHeight * 3, frameWidth, frameHeight);
         TextureRegion spawn2 = new TextureRegion(slimeTexture, frameWidth, frameHeight * 3, frameWidth, frameHeight);
         TextureRegion spawn3 = new TextureRegion(slimeTexture, frameWidth * 2, frameHeight * 3, frameWidth, frameHeight);
@@ -113,20 +102,15 @@ public class Slime {
     }
 
     public void update(float delta, Player player, TiledMap currentMap) {
-        // Time must always pass so warning, spawn, walk, idle, and death animations can play
         stateTime += delta;
-
-        // Update slime stats & timers (Spawn Timer & Attack Cooldown)
         stats.update(delta);
 
-        // Do not move or attack while spawning or dead
         if (stats.isSpawning() || stats.isDead()) {
             return;
         }
 
         isMoving = false;
 
-        // 1. Unstuck check: if already overlapping another slime, push them apart
         for (Slime other : WaveManager.getInstance().getSlimes()) {
             if (other == this || other.getStats().isDead() || other.getStats().isSpawning()) continue;
 
@@ -139,11 +123,8 @@ public class Slime {
             }
         }
 
-        // 2. Predict the next position based on the Player's position
         float nextX = x;
         float nextY = y;
-
-        // Path towards the Player
         if (player.getY() > y + (float) 0.1) {
             nextY += speed * delta;
             isMoving = true;
@@ -164,7 +145,7 @@ public class Slime {
             isMoving = true;
         }
 
-        // 3. Apply movement (ignores map collision, only checks other slimes)
+        //unstuck slime
         if (!isCollidingWithSlimes(nextX, y)) {
             x = nextX;
         }
@@ -172,7 +153,7 @@ public class Slime {
             y = nextY;
         }
 
-        // 4. Deal contact damage when touching the Player
+        // attack by touching
         if (Math.abs(player.getX() - x) < (float) 0.8 && Math.abs(player.getY() - y) < (float) 0.8) {
             if (stats.performAttack()) {
                 PlayerStats.getInstance().takeDamage(stats.getDamage());
@@ -181,14 +162,11 @@ public class Slime {
     }
 
     public void render(SpriteBatch batch) {
-        // 1. Check if currently in the 1.8s Spawning Phase
         if (stats.isSpawning()) {
             if (stateTime < (float) 1.2) {
-                // First 1.2s: Draw flashing warning box at normal tile size (1.0x1.0) centered on the 2.0x2.0 slime spot
                 TextureRegion warnFrame = warningAnimation.getKeyFrame(stateTime, true);
                 batch.draw(warnFrame, x + (float) 0.5, y + (float) 0.5, (float) 1.0, (float) 1.0);
             } else {
-                // Remaining 0.6s: Draw the 3-frame slime spawn animation with the slime's color tint
                 TextureRegion spawnFrame = spawnAnimation.getKeyFrame(stateTime - (float) 1.2, false);
                 batch.setColor(slimeColor);
                 batch.draw(spawnFrame, x, y, width, height);
@@ -226,12 +204,8 @@ public class Slime {
         }
     }
 
-    /**
-     * Checks if the target position overlaps with any other alive slime.
-     */
     private boolean isCollidingWithSlimes(float targetX, float targetY) {
         for (Slime other : WaveManager.getInstance().getSlimes()) {
-            // Skip checking against itself, dead slimes, or slimes still spawning
             if (other == this || other.getStats().isDead() || other.getStats().isSpawning()) {
                 continue;
             }
@@ -252,7 +226,6 @@ public class Slime {
         if (warningTexture != null) warningTexture.dispose();
     }
 
-    // --- Getters ---
     public float getX() { return x; }
     public float getY() { return y; }
     public float getWidth() { return width; }

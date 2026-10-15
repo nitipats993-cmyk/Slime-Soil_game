@@ -73,10 +73,6 @@ public class CropManager {
         return false;
     }
 
-    /**
-     * Deletes all planted crops on the farm (triggered if you stay >1 hour in the Arena
-     * or fail to kill all Farm Defense slimes before 6:00 AM).
-     */
     public void clearAllCrops() {
         activeCrops.clear();
         System.out.println("WARNING: All crops on your farm have been destroyed!");

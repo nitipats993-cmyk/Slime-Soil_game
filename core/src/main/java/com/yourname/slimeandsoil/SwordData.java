@@ -21,7 +21,7 @@ public class SwordData {
         }
     }
 
-    // 7 Tiers defined according to progression
+    // sword upgrade stats
     public static final TierInfo[] TIERS = new TierInfo[] {
         new TierInfo("Wooden Sword", 3, 1, 30, "assets/objects/myAssets/wooden_sword.png"),
         new TierInfo("Iron Sword", 8, 2, 80, "assets/objects/myAssets/iron_sword.png"),

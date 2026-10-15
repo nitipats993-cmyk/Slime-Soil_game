@@ -28,10 +28,8 @@ public class TransitionDialog {
         this.isWavesIncomplete = false;
 
         if (isDungeonEntry) {
-            // Block entering Arena if after 6:00 PM or already entered today
             this.isBlocked = (isTooLate || TimeManager.getInstance().hasEnteredDungeonToday());
         } else {
-            // Block leaving Arena if any slimes from the spawned waves are still alive
             this.isWavesIncomplete = !WaveManager.getInstance().hasClearedAllArenaWaves();
             this.isBlocked = this.isWavesIncomplete;
         }
@@ -42,7 +40,6 @@ public class TransitionDialog {
     public void update() {
         if (!active) return;
 
-        // Re-check time if trying to enter the dungeon
         float currentHour = TimeManager.getInstance().getCurrentHour();
         if (isDungeonEntry && (currentHour >= 18.0f || currentHour < 6.0f)) {
             isTooLate = true;
@@ -56,7 +53,6 @@ public class TransitionDialog {
             return;
         }
 
-        // Press Y to confirm map transition
         if (Gdx.input.isKeyJustPressed(Input.Keys.Y)) {
             active = false;
             if (isDungeonEntry) {
@@ -69,7 +65,6 @@ public class TransitionDialog {
             GameScreen.getInstance().loadMap(targetMap, spawnX, spawnY);
         }
 
-        // Press N or ESC to cancel
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) || Gdx.input.isKeyJustPressed(Input.Keys.N)) {
             active = false;
         }

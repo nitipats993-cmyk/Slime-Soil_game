@@ -13,10 +13,11 @@ public class Inventory {
         items = new HashMap<>();
         gold = 100; // starting gold is 100 don't you dare change it bro
 
-        // Starter Finite Seeds
-        items.put("Tomato Seed", 3);     // Starts with 3 Tomato Seeds
-        items.put("GemFlower Seed", 0);  // Starts with 0 (must be looted from slimes)
-        items.put("SkillFlower Seed", 0);
+        items.put("Tomato Seed", 3);     // starts with 3 Tomato Seeds
+        items.put("Carrot Seed", 0);     // starts with 0 Carrot Seeds
+        items.put("Wheat Seed", 0);      // starts with 0 Wheat Seeds
+        items.put("GemFlower Seed", 0);  // starts with 0 (must be looted from slimes) rare
+        items.put("SkillFlower Seed", 0);  // starts with 0 (must be looted from slimes) rare
     }
 
     public static Inventory getInstance() {

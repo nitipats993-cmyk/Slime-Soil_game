@@ -13,9 +13,6 @@ public class WarningDialog {
     private String message = "";
     private Runnable onConfirmAction;
 
-    /**
-     * 3-parameter method for custom titles (e.g., ShippingBin)
-     */
     public void show(String title, String message, Runnable onConfirmAction) {
         this.title = title;
         this.message = message;
@@ -23,9 +20,6 @@ public class WarningDialog {
         this.active = true;
     }
 
-    /**
-     * 2-parameter method for default title prompts (e.g., Player actions)
-     */
     public void showDialog(String message, Runnable onConfirmAction) {
         show("=== CONFIRMATION ===", message, onConfirmAction);
     }
@@ -33,15 +27,12 @@ public class WarningDialog {
     public void update() {
         if (!active) return;
 
-        // Press Y to confirm action
         if (Gdx.input.isKeyJustPressed(Input.Keys.Y)) {
             active = false;
             if (onConfirmAction != null) {
                 onConfirmAction.run();
             }
         }
-
-        // Press N or ESC to cancel
         if (Gdx.input.isKeyJustPressed(Input.Keys.N) || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             active = false;
         }

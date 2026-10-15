@@ -126,7 +126,13 @@ public class TimeManager {
     /**
      * Full rest at the house door to advance to 6:00 AM of the Next Day & refill stats
      */
-    public void sleepToNextDay() {
+    public void sleepToNextDay() {// if slimes not all dead before sleeping, destroy all farm crops
+        if (WaveManager.getInstance().getAliveSlimeCount() > 0) {
+            CropManager.getInstance().clearAllCrops();
+            WaveManager.getInstance().dispose();
+            PlayerStats.getInstance().showPickupText("Slimes destroyed your crops while you slept!");
+            System.out.println("=== Slept without clearing slimes! All crops removed! ===");}
+
         System.out.println("Sleeping until 6:00 AM of the next day...");
         currentHour = 6.0f;
         startNewDay();

@@ -11,7 +11,6 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class SlimeAndSoilGame extends Game {
-    // Make these public so your screens can access them easily
     public SpriteBatch batch;
     public OrthographicCamera camera;
     public Viewport viewport;
@@ -22,12 +21,9 @@ public class SlimeAndSoilGame extends Game {
         batch = new SpriteBatch();
         camera = new OrthographicCamera();
         viewport = new FitViewport(20, (float) 11.25, camera); // 16x9 World Units (1 Unit = 1 Tile)
-
-        // Standard AssetManager setup for Tiled Maps
         assetManager = new AssetManager();
         assetManager.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
 
-        // Boot directly into the GameScreen
         this.setScreen(new GameScreen(this));
     }
 

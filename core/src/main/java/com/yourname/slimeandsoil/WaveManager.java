@@ -30,16 +30,10 @@ public class WaveManager {
         return instance;
     }
 
-    /**
-     * Clears any leftover slimes when entering the Arena.
-     */
     public void startArenaRun() {
         dispose();
     }
 
-    /**
-     * Player can only leave the Arena when all slimes from all spawned waves are defeated.
-     */
     public boolean hasClearedAllArenaWaves() {
         return getAliveSlimeCount() == 0;
     }
@@ -47,7 +41,7 @@ public class WaveManager {
     public void update(float delta, Player player, TiledMap currentMap, String currentMapPath) {
         if (currentMapPath == null) return;
 
-        // 1. AUTOMATIC FARM DEFENSE WAVE (Triggers at 18:00 PM inside main.tmx)
+        //farm wave at 6 pm
         if (currentMapPath.contains("main.tmx")) {
             float hour = TimeManager.getInstance().getCurrentHour();
             if (hour >= 18.0f && !TimeManager.getInstance().isFarmWaveTriggeredToday()) {
@@ -57,7 +51,7 @@ public class WaveManager {
             }
         }
 
-        // 2. FOREST DUNGEON MANUAL WAVE CONTROLS (Press [M] inside untitled.tmx - No wave limit!)
+        //wait to skip wave
         if (currentMapPath.contains("untitled.tmx")) {
             if (waveTimer > 0) {
                 waveTimer -= delta;
@@ -72,7 +66,7 @@ public class WaveManager {
             }
         }
 
-        // Update all active slimes and remove finished dead slimes
+        //get current slime nums
         for (int i = slimes.size() - 1; i >= 0; i--) {
             Slime slime = slimes.get(i);
             slime.update(delta, player, currentMap);
@@ -83,7 +77,7 @@ public class WaveManager {
             }
         }
 
-        // Grant +1 Skill Point every 3 waves cleared
+        // every tier cleared give skillpts
         if (currentWave > 0 && slimes.isEmpty() && lastRewardedWave != currentWave) {
             if (currentWave % 3 == 0) {
                 PlayerStats.getInstance().addSkillPoints(1);
@@ -96,7 +90,7 @@ public class WaveManager {
 
     public void startNextWave(TiledMap currentMap) {
         currentWave++;
-        waveTimer = 15; // Reset 15-second skip timer
+        waveTimer = 15; //skip timer
 
         int tier = (currentWave - 1) / 3;
         int waveInBetween = (currentWave - 1) % 3;

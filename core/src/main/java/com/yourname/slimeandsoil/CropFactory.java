@@ -13,11 +13,7 @@ public class CropFactory {
     private static final Map<String, TextureRegion[]> cropStageRegions = new HashMap<>();
     private static Texture wateredSoilTexture;
 
-    /**
-     * Loads and slices crop spritesheets and watered soil overlay.
-     */
     public static void loadAssets() {
-        // Load Watered Soil Tile Graphic
         if (Gdx.files.internal("assets/objects/myAssets/plowed_watered.png").exists()) {
             wateredSoilTexture = new Texture(Gdx.files.internal("assets/objects/myAssets/plowed_watered.png"));
         } else {
@@ -55,9 +51,6 @@ public class CropFactory {
         return wateredSoilTexture;
     }
 
-    /**
-     * Factory Method: Creates specific crops with maxStage = 3 (4 frames: 0, 1, 2, 3).
-     */
     public static Crop createCrop(String cropType, int gridX, int gridY) {
         String key = cropType.toLowerCase().replaceAll("\\s+", "");
         Crop crop;
@@ -91,9 +84,6 @@ public class CropFactory {
         return crop;
     }
 
-    /**
-     * Disposes loaded textures to free GPU memory.
-     */
     public static void dispose() {
         for (Texture texture : cropTextures.values()) {
             if (texture != null) {

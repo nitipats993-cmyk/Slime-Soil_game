@@ -28,20 +28,15 @@ public class LightManager {
         return instance;
     }
 
-    /**
-     * Clears all registered light sources when switching maps.
-     */
     public void clearLights() {
         if (lightSources != null) {
             lightSources.clear();
         }
     }
 
-    /**
-     * Programmatically creates a soft, circular radial light glow texture.
-     */
+    // Tiled light fixtures
     private void generateLightTexture() {
-        int radius = 64; // Glow radius in pixels
+        int radius = 64; // glow size
         int size = radius * 2;
         Pixmap pixmap = new Pixmap(size, size, Pixmap.Format.RGBA8888);
 
@@ -50,9 +45,9 @@ public class LightManager {
                 float dist = Vector2.dst(x, y, radius, radius);
                 if (dist < radius) {
                     float alpha = 1.0f - (dist / radius);
-                    alpha = alpha * alpha; // Quadratic falloff for soft edges
+                    alpha = alpha * alpha;
 
-                    // Soft warm yellow/amber light hue
+                    //change color here
                     pixmap.setColor(1.0f, 0.85f, 0.5f, alpha * 0.85f);
                     pixmap.drawPixel(x, y);
                 }
@@ -63,31 +58,24 @@ public class LightManager {
         pixmap.dispose();
     }
 
-    /**
-     * Adds a light source position in tile grid or world unit coordinates.
-     */
     public void addLightSource(float worldX, float worldY) {
         lightSources.add(new Vector2(worldX, worldY));
     }
 
-    /**
-     * Renders warm additive light glows over lamps and windows when dark.
-     */
+
     public void render(SpriteBatch batch) {
         float currentHour = TimeManager.getInstance().getCurrentHour();
 
-        // Only draw lamp lights during evening/night (5:00 PM to 6:00 AM)
+        // when dark lights on
         if (currentHour >= 17.0f || currentHour < 6.0f) {
 
-            // Enable Additive Blending (makes pixels underneath brighten up)
+
             batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
             batch.setColor(Color.WHITE);
-
-            // Light diameter in world tile units (e.g., 4x4 tiles wide)
             float lightSize = 4.0f;
 
+            // center light pos
             for (Vector2 pos : lightSources) {
-                // Center the light texture on the lamp/window coordinate
                 batch.draw(
                     lightTexture,
                     pos.x - (lightSize / 2f),
@@ -97,7 +85,7 @@ public class LightManager {
                 );
             }
 
-            // Restore standard alpha blending for normal sprite rendering
+            // makes it looks better
             batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         }
     }

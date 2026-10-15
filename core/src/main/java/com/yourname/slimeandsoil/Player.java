@@ -12,24 +12,24 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 
 public class Player {
-    // --- Player Variables ---
+    // slimer walk
     private Texture slimerTexture;
     private Animation<TextureRegion> walkAnimation;
 
-    // --- Idle Animation Variables ---
+    // smiler idle
     private Texture slimerIdleTexture;
     private Animation<TextureRegion> idleAnimation;
 
-    // --- Dodge Animation Variables ---
+    // slimer_dodge
     private Texture slimerDodgeTexture;
     private Animation<TextureRegion> dodgeAnimation;
 
-    // --- Death Animation/Sprite Variables ---
+    // slimer-death
     private Texture slimerDeathTexture;
     private Animation<TextureRegion> deathAnimation;
     private float deathStateTime = 0.0f;
 
-    // --- Overhead Pickup Text Font ---
+    //  notis text
     private BitmapFont pickupFont;
 
     private float stateTime = 0;
@@ -38,39 +38,34 @@ public class Player {
     private float y = 5;
     private float speed = 4;
     private boolean isFacingRight = false;
-
-    // Player size changed back to 2.0 for precise tile alignment
     private float width = (float) 2.0;
     private float height = (float) 2.0;
 
-    // Player actions
+    // movement+tool select update
     private Tool currentTool;
     public enum Direction { UP, DOWN, LEFT, RIGHT }
     private Direction currentDirection = Direction.DOWN; // Default facing direction
 
-    // Sword Swinging
+    // swing sword update time
     private boolean isAttacking = false;
     private float attackTimer = 0.0f;
     private static final float ATTACK_DURATION = 0.20f; // 0.2s quick sword swing
 
     public Player() {
-        // Load the sprite sheet with the explicit assets path
         slimerTexture = new Texture(Gdx.files.internal("assets/objects/myAssets/slimer.png"));
+        int frameWidth = slimerTexture.getWidth() / 4; // 4 frames so divide by four
+        int frameHeight = slimerTexture.getHeight();   // height stays the same
 
-        int frameWidth = slimerTexture.getWidth() / 4;
-        int frameHeight = slimerTexture.getHeight();
-
-        // slicing: manually extracting each frame by shifting the X position
-        TextureRegion frame1 = new TextureRegion(slimerTexture, 0, 0, frameWidth, frameHeight);
+        TextureRegion frame1 = new TextureRegion(slimerTexture, 0, 0, frameWidth, frameHeight); //walk frame cycle
         TextureRegion frame2 = new TextureRegion(slimerTexture, frameWidth, 0, frameWidth, frameHeight);
         TextureRegion frame3 = new TextureRegion(slimerTexture, frameWidth * 2, 0, frameWidth, frameHeight);
         TextureRegion frame4 = new TextureRegion(slimerTexture, frameWidth * 3, 0, frameWidth, frameHeight);
 
-        walkAnimation = new Animation<>((float) 0.15, frame1, frame2, frame3, frame4);
+        walkAnimation = new Animation<>((float) 0.15, frame1, frame2, frame3, frame4); // execute walk frames
 
-        // Load the Idle Animation (Updated for 2 frames)
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
         slimerIdleTexture = new Texture(Gdx.files.internal("assets/objects/myAssets/slimer_idle.png"));
-
         int idleFrameWidth = slimerIdleTexture.getWidth() / 2;
         int idleFrameHeight = slimerIdleTexture.getHeight();
 
@@ -79,7 +74,8 @@ public class Player {
 
         idleAnimation = new Animation<>((float) 0.4, idle1, idle2);
 
-        // --- Load Dodge Animation ---
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
         if (Gdx.files.internal("assets/objects/myAssets/slimer_dodge.png").exists()) {
             slimerDodgeTexture = new Texture(Gdx.files.internal("assets/objects/myAssets/slimer_dodge.png"));
 
@@ -100,7 +96,8 @@ public class Player {
             dodgeAnimation = new Animation<>((float) 0.032, dFrame1, dFrame2, dFrame3, dFrame4, dFrame5, dFrame6, dFrame7, dFrame8, dFrame9, dFrame10);
         }
 
-        // --- Load Death Texture ---
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
         String deathPath = null;
         if (Gdx.files.internal("assets/objects/myAssets/slimer_death.png").exists()) {
             deathPath = "assets/objects/myAssets/slimer_death.png";
@@ -124,13 +121,13 @@ public class Player {
             deathAnimation.setPlayMode(Animation.PlayMode.NORMAL); // Hold on final puddle frame
         }
 
-        // Initialize small overhead font scaled for world tile coordinates
+        // all warning and notis text settings
         pickupFont = new BitmapFont();
         pickupFont.setUseIntegerPositions(false);
         pickupFont.getData().setScale((float) 0.035);
         pickupFont.setColor(Color.PURPLE);
 
-        // Equip a default tool to start
+        // init tool to hoe (1)
         currentTool = new Hoe();
     }
 
@@ -140,7 +137,7 @@ public class Player {
     }
 
     public void update(float delta, TiledMap currentMap, HUD hud) {
-        // Stop updating player controls when dead
+        //stop players input when dead
         if (PlayerStats.getInstance().isDead()) {
             deathStateTime += delta;
             return;
@@ -148,10 +145,10 @@ public class Player {
 
         stateTime += delta;
 
-        // Update player stats & timers (Mana, Shield, Dodge CD, Pickup Text Timer)
+        // update all player stats
         PlayerStats.getInstance().update(delta);
 
-        // Block player movement and action inputs while any UI Dialog is open
+        // if warning dialog is opened stop players input
         if (hud != null) {
             if ((hud.getWarningDialog() != null && hud.getWarningDialog().isActive()) ||
                 (hud.getSkillShopDialog() != null && hud.getSkillShopDialog().isActive()) ||
@@ -161,7 +158,7 @@ public class Player {
             }
         }
 
-        // --- Press R to Fast-Forward Daytime to 18:00 (Start of Farm Defense) ---
+        // skip to evening input
         if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
             if (TimeManager.getInstance().isInArena()) {
                 PlayerStats.getInstance().showPickupText("Cannot skip to 6:00 PM in the Arena!");
@@ -178,7 +175,7 @@ public class Player {
             return;
         }
 
-        // --- Sword Attack Trigger (Press J or Left Click) ---
+        // attack input
         if (Gdx.input.isKeyJustPressed(Input.Keys.J) || Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
             if (!isAttacking) {
                 isAttacking = true;
@@ -186,7 +183,6 @@ public class Player {
                 executeSwordAttack();
             }
         }
-
         if (isAttacking) {
             attackTimer += delta;
             if (attackTimer >= ATTACK_DURATION) {
@@ -194,7 +190,7 @@ public class Player {
             }
         }
 
-        // --- Dodge Mechanic (Press Shift) ---
+        // dodge input
         float currentSpeed = speed;
         if (Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT)) {
             boolean dodged = PlayerStats.getInstance().performDodge();
@@ -203,19 +199,12 @@ public class Player {
                 System.out.println("Dodged! (-5 Mana)");
             }
         }
-
-        // Apply speed boost during active invulnerability frames (dodge roll)
         if (PlayerStats.getInstance().isInvulnerable()) {
             currentSpeed = speed * 2.2f;
         }
-
         boolean isMoving = false;
-
-        // 1. Predict the next position based on input instead of moving immediately
         float nextX = x;
         float nextY = y;
-
-        // Movement & Direction Tracking
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             nextY += currentSpeed * delta;
             currentDirection = Direction.UP;
@@ -226,7 +215,6 @@ public class Player {
             currentDirection = Direction.DOWN;
             isMoving = true;
         }
-
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             nextX -= currentSpeed * delta;
             isFacingRight = false;
@@ -239,8 +227,14 @@ public class Player {
             currentDirection = Direction.RIGHT;
             isMoving = true;
         }
+        if (!isSolid(nextX, y, currentMap)) {
+            x = nextX;
+        }
+        if (!isSolid(x, nextY, currentMap)) {
+            y = nextY;
+        }
 
-        // --- Tool & Seed Switching (Keys 1 through 7) ---
+        // hotbar inputs
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) currentTool = new Hoe();
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) currentTool = new Seed("Tomato");
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) currentTool = new Seed("GemFlower");
@@ -249,15 +243,7 @@ public class Player {
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_6)) currentTool = new Seed("Wheat");
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_7)) currentTool = new WateringCan();
 
-        // 2. Apply movement ONLY if the predicted position is NOT solid
-        if (!isSolid(nextX, y, currentMap)) {
-            x = nextX;
-        }
-        if (!isSolid(x, nextY, currentMap)) {
-            y = nextY;
-        }
-
-        // Use tool, harvest crop, sell items, enter house/bed, or transition maps on SPACE key
+        // interact input
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             float feetX = x + (width / 2.0f);
             float feetY = y + 0.3f;
@@ -265,11 +251,25 @@ public class Player {
             int targetGridX = (int) Math.floor(feetX);
             int targetGridY = (int) Math.floor(feetY);
 
-            // 1. Check House Door Bed Area (Sleep to Next Day Prompt)
+            // next day interaction check/farm wave check
             if (GameScreen.getInstance() != null && GameScreen.getInstance().isHouseBedLocation(targetGridX, targetGridY)) {
                 if (hud != null) {
+                    float currentHour = TimeManager.getInstance().getCurrentHour();
+
+                    // restrict sleeping before 6 PM
+                    if (currentHour >= 6.0f && currentHour < 18.0f) {
+                        PlayerStats.getInstance().showPickupText("You can only sleep after 6:00 PM!");
+                        return;
+                    }
+
+                    // warning: slimes alive text
                     if (WaveManager.getInstance().getAliveSlimeCount() > 0) {
-                        hud.getWarningDialog().showDialog("Clear the slimes attacking your farm before sleeping!", null);
+                        hud.getWarningDialog().showDialog("Slimes are attacking! Sleeping will destroy all crops. Sleep anyway?", new Runnable() {
+                            @Override
+                            public void run() {
+                                TimeManager.getInstance().sleepToNextDay();
+                            }
+                        });
                     } else {
                         hud.getWarningDialog().showDialog("Are you ready to go to the next day?", new Runnable() {
                             @Override
@@ -282,7 +282,7 @@ public class Player {
                 return;
             }
 
-            // 2. Check Map Transitions (Prompt Warning Dialog)
+            // map transition check
             if (GameScreen.getInstance() != null) {
                 MapTransition transition = GameScreen.getInstance().checkTransition(feetX, feetY);
                 if (transition != null && hud != null) {
@@ -295,7 +295,7 @@ public class Player {
                 }
             }
 
-            // 3. Check Shipping Bin selling area
+            // sell shop interaction box check
             if (ShippingBin.getInstance().isBinLocation(targetGridX, targetGridY)) {
                 if (hud != null) {
                     ShippingBin.getInstance().interact(hud.getWarningDialog());
@@ -303,7 +303,7 @@ public class Player {
                 return;
             }
 
-            // 4. Check Skill Shop (Trainer NPC)
+            // skillshop interaction box check
             if (SkillShop.getInstance().isShopLocation(targetGridX, targetGridY)) {
                 if (hud != null) {
                     hud.getSkillShopDialog().open();
@@ -311,7 +311,7 @@ public class Player {
                 return;
             }
 
-            // 5. Check Sword Shop (Blacksmith NPC)
+            // swordshop interaction box check
             if (SwordShop.getInstance().isShopLocation(targetGridX, targetGridY)) {
                 if (hud != null) {
                     hud.getSwordShopDialog().open();
@@ -319,7 +319,7 @@ public class Player {
                 return;
             }
 
-            // 6. Try harvesting a crop first; if no fully grown crop is present, use equipped tool
+            // tool use check
             boolean harvested = CropManager.getInstance().harvestCrop(targetGridX, targetGridY);
             if (!harvested) {
                 currentTool.use(this, targetGridX, targetGridY, currentMap);
@@ -327,9 +327,8 @@ public class Player {
         }
     }
 
-    /**
-     * Executes a sword attack and damages active slimes in front of the player.
-     */
+
+
     private void executeSwordAttack() {
         float feetX = x + (width / 2.0f);
         float feetY = y + 0.3f;
@@ -344,7 +343,7 @@ public class Player {
         int totalDmg = PlayerStats.getInstance().getTotalAttackDamage();
         System.out.println("Attacked facing " + currentDirection + " dealing " + totalDmg + " damage!");
 
-        // --- Damage active slimes in sword hit zone ---
+        //check if sword range hit slime, if hit apply dmg to slime
         for (Slime slime : WaveManager.getInstance().getSlimes()) {
             if (slime.getStats().isDead() || slime.getStats().isSpawning()) continue;
 
@@ -357,8 +356,8 @@ public class Player {
         }
     }
 
+    //load player actions
     public void render(SpriteBatch batch) {
-        // --- Game Over State: Player Death ---
         if (PlayerStats.getInstance().isDead()) {
             if (deathAnimation != null) {
                 TextureRegion currentDeathFrame = deathAnimation.getKeyFrame(deathStateTime, false);
@@ -380,7 +379,7 @@ public class Player {
 
         TextureRegion currentFrame;
 
-        // 1. Check if dodging first
+        //player anim
         if (PlayerStats.getInstance().isInvulnerable() && dodgeAnimation != null) {
             currentFrame = dodgeAnimation.getKeyFrame(stateTime, false);
         } else if (isMoving) {
@@ -389,19 +388,18 @@ public class Player {
             currentFrame = idleAnimation.getKeyFrame(stateTime, true);
         }
 
-        // Flip frame horizontally depending on facing direction
+        // flip sprite when turning
         if (currentFrame.isFlipX() != isFacingRight) {
             currentFrame.flip(true, false);
         }
-
         batch.draw(currentFrame, x, y, width, height);
 
-        // Draw small seed pickup text above the player's head when active
+        // seed pickup text
         if (PlayerStats.getInstance().getPickupTextTimer() > 0) {
             pickupFont.draw(batch, PlayerStats.getInstance().getPickupText(), x - (float) 0.2, y + height + (float) 0.2);
         }
 
-        // Draw Procedural Sword Swing Arc if attacking
+        // attack
         if (isAttacking) {
             Texture swordTex = SwordData.getSwordTexture(PlayerStats.getInstance().getSwordTier());
             if (swordTex != null) {
@@ -432,6 +430,7 @@ public class Player {
         }
     }
 
+    //collision
     private boolean isSolid(float targetX, float targetY, TiledMap currentMap) {
         TiledMapTileLayer collisionLayer = (TiledMapTileLayer) currentMap.getLayers().get("Collision");
         if (collisionLayer == null) return false;

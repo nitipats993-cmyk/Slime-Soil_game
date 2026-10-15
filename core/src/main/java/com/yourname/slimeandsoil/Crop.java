@@ -56,7 +56,7 @@ public class Crop {
     }
 
     public void render(SpriteBatch batch) {
-        // 1. Draw dark watered soil tile underneath if crop is watered
+        // if use can tile change to wet
         if (isWatered) {
             Texture wateredTile = CropFactory.getWateredSoilTexture();
             if (wateredTile != null) {
@@ -64,7 +64,7 @@ public class Crop {
             }
         }
 
-        // 2. Draw current crop growth frame
+        // updates crop growth stage
         if (stageTextures != null && currentStage < stageTextures.length) {
             TextureRegion currentFrame = stageTextures[currentStage];
             if (currentFrame != null) {
@@ -73,31 +73,19 @@ public class Crop {
         }
     }
 
-    // --- Getters ---
     public String getName() { return name; }
     public int getGridX() { return gridX; }
     public int getGridY() { return gridY; }
     public boolean isWatered() { return isWatered; }
     public int getCurrentStage() { return currentStage; }
 
-    /**
-     * Checks if the crop has reached its maximum growth stage (Stage 3).
-     */
     public boolean isFullyGrown() {
         return this.currentStage >= 3;
     }
-
-    /**
-     * Checks if the crop can produce multiple harvests.
-     */
     public boolean isRegrowable() {
         return this.isRegrowable;
-    }
-
-    /**
-     * Resets a regrowable crop back to Stage 1 after harvesting.
-     */
+    } //only tomato
     public void resetToStageOne() {
         this.currentStage = 1;
-    }
+    } //tomato dont die when collect
 }

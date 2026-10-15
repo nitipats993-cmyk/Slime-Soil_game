@@ -43,7 +43,7 @@ public class HUD {
 
         batch.begin();
 
-        // 1. Time & Day Clock (Top Left)
+        //clock and the day
         String timeString = formatTime(
             TimeManager.getInstance().getCurrentHour(),
             TimeManager.getInstance().getCurrentDay()
@@ -51,11 +51,11 @@ public class HUD {
         font.setColor(Color.YELLOW);
         font.draw(batch, timeString, 25, 695);
 
-        // 2. Tool Display
+        //tool display
         font.setColor(Color.WHITE);
         font.draw(batch, "Tool: " + player.getCurrentToolName(), 25, 655);
 
-        // 3. Wave Status & Skip Timer Display (Top Left below Tool)
+        //wave display
         WaveManager wm = WaveManager.getInstance();
         if (wm.getCurrentWave() == 0) {
             font.setColor(Color.ORANGE);
@@ -76,7 +76,7 @@ public class HUD {
             font.draw(batch, String.format("Wave %d  |  Slimes: %d  |  %s", wm.getCurrentWave(), alive, skipStatus), 25, 615);
         }
 
-        // 4. Combat Stats Gauges (Top Center)
+        // health,armor,mana
         PlayerStats stats = PlayerStats.getInstance();
         font.setColor(Color.RED);
         font.draw(batch, "HP: " + stats.getCurrentHealth() + "/" + stats.getMaxHealth(), 380, 695);
@@ -87,7 +87,7 @@ public class HUD {
         font.setColor(Color.BLUE);
         font.draw(batch, "Mana: " + stats.getCurrentMana() + "/" + stats.getMaxMana(), 680, 695);
 
-        // 5. Gold & Skill Point Trackers (Top Right)
+        // gold & skillpts
         int gold = Inventory.getInstance().getGold();
         int skillPts = stats.getSkillPoints();
 
@@ -97,13 +97,13 @@ public class HUD {
         font.setColor(Color.GREEN);
         font.draw(batch, "Skill: " + skillPts, 1080, 655);
 
-        // 6. Hotbar Controls Guide
+        // hotbars select display
         font.getData().setScale(1.1f);
         font.setColor(Color.LIGHT_GRAY);
         font.draw(batch, "[1] Hoe  [2] Tomato  [3] Gem  [4] Skill  [5] Carrot  [6] Wheat  [7] Can  |  [Space] Action  [Shift] Dodge  [M] Wave  [R] Rest 18:00", 20, 35);
         font.getData().setScale(1.8f);
 
-        // 7. Render Overlays
+        // dead screen
         if (stats.isDead()) {
             font.getData().setScale(3.0f);
             font.setColor(Color.RED);

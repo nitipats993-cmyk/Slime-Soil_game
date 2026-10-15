@@ -11,27 +11,24 @@ public class Hoe implements Tool {
 
     @Override
     public void use(Player player, int targetX, int targetY, TiledMap currentMap) {
-        // 1. Verify if the targeted position is within the farmable area
         if (!isFarmable(currentMap, targetX, targetY)) {
             System.out.println("Cannot farm here! Target tile (X: " + targetX + ", Y: " + targetY + ") is outside the farmable area.");
             return;
         }
 
-        // 2. Fetch the "Soil" tile layer
+        //validation for finding tiled pic
         TiledMapTileLayer soilLayer = (TiledMapTileLayer) currentMap.getLayers().get("Soil");
         if (soilLayer == null) {
             System.out.println("Error: Layer 'Soil' was not found in TiledMap!");
             return;
         }
-
-        // 3. Fetch the tilled dirt graphic from the "plowed" tileset
         TiledMapTileSet tileSet = currentMap.getTileSets().getTileSet(PLOWED_TILESET_NAME);
         if (tileSet == null || !tileSet.iterator().hasNext()) {
             System.out.println("Warning: Could not find tileset named '" + PLOWED_TILESET_NAME + "'!");
             return;
         }
 
-        // 4. Stamp the tilled dirt graphic onto the target cell
+        //change dirt to tilled dirt
         TiledMapTile tilledTile = tileSet.iterator().next();
         TiledMapTileLayer.Cell cell = soilLayer.getCell(targetX, targetY);
         if (cell == null) {
@@ -43,9 +40,6 @@ public class Hoe implements Tool {
         System.out.println("Successfully tilled soil graphic at X: " + targetX + " Y: " + targetY);
     }
 
-    /**
-     * Checks if a specific grid coordinate is painted on the "Farmable" layer.
-     */
     private boolean isFarmable(TiledMap map, int tileX, int tileY) {
         TiledMapTileLayer farmableLayer = (TiledMapTileLayer) map.getLayers().get("Farmable");
         if (farmableLayer == null) {
