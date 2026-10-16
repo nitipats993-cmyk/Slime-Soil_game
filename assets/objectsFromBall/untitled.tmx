@@ -16,6 +16,7 @@
    <image source="../objects/Outdoor decoration/Oak_Tree fixed.png" width="128" height="80"/>
   </tile>
  </tileset>
+ <tileset firstgid="223" source="../objects/red2.0.tsx"/>
  <layer id="1" name="Ground" width="30" height="20">
   <data encoding="base64" compression="zlib">
    eJxLZ2BgSB/Fo3iQ4JhBbl7sIAgjEGYEYqYBsFcIiIWpHEbEqCfG3oHyLz5MbvpTBmKVAfDvSMDULhNGqhtheLCUiYMRAwBf2O29
@@ -28,7 +29,7 @@
  </layer>
  <layer id="7" name="Collision" width="30" height="20" visible="0">
   <data encoding="base64" compression="zlib">
-   eJxjYBg4cJfOGNleeoFRe4e/vXeR2AMBRu0dfvYOVLoaifl31F762zsQ9f5AAAA8BEo/
+   eJxjYBg4cJfOGNleeoFRe4e/vXeR2PQE90ftHbb2DlS6Gon5d9Re+ts7EPX+QAAAcUNNuw==
   </data>
  </layer>
  <objectgroup id="8" name="Objects">

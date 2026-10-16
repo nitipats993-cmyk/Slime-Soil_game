@@ -5,7 +5,7 @@ public class PlayerStats {
     //all player vars
 
     // starting player stats
-    private int skillPoints = 1;
+    private int skillPoints = 100; // default is 1
     private int maxHealth = 5;
     private int currentHealth = 5;
     private int maxShield = 2;

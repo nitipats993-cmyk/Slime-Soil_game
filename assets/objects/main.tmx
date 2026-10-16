@@ -45,7 +45,7 @@
  </layer>
  <layer id="11" name="Collision" width="30" height="30" visible="0">
   <data encoding="base64" compression="zlib">
-   eJzlllEOwCAIQ83u7d33a8yAdhRcMhI/FrGvolPnNcY82KJQ6exaLDfjTV2fvc/KZWqzjkHGez7ZdWH9RdyKyHAznrrm661hV52j/Y/0P+V6GgpflodMzle4Ck2Gi8bfuAq9N3tfwd353cFymbuY4XbNHfFbeX5X6J7gRrFyO/nV7xzrO/uezHhC38JKL+j/q66Jdf50tBt+RHYT
+   eJzlllEOwCAIQ83u7d33a8yANkA1GYkfi9hXcXPMZ4x5cERRpbNrsdyMt+r67HNWLlObdQ2y3vPJngvrL+J2RIab8aTar3eGqjpH7z8y/5XraVT4sjxkcm7hVmiyXDT3T1xUD+GpuTtfHSyX+RczXNXeEb+d93eH7gluFCtXye/uc6znbD+Z8YT2wpVe0O+3uibW/aMYL/W8d5A=
   </data>
  </layer>
  <layer id="13" name="Soil" width="30" height="30">

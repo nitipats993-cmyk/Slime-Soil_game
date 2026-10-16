@@ -63,6 +63,12 @@ public class CropManager {
             String cropName = crop.getName();
             Inventory.getInstance().addItem(cropName, 1);
 
+            // get skill point if harvesting a SkillFlower cuz why did Ming lowkey remove this line wtf.
+            if (cropName.equals("SkillFlower")) {
+                PlayerStats.getInstance().addSkillPoints(1);
+                PlayerStats.getInstance().showPickupText("+1 Skill Point!");
+            }
+
             if (crop.isRegrowable()) {
                 crop.resetToStageOne();
             } else {
